@@ -1,0 +1,58 @@
+import RegisterForEventForm from "@/components/forms/register-for-event-form";
+import { getDocument } from "@/lib/appwrite/server/appwrite";
+
+export const metadata = {
+   title: "Events Suosittelu Mylly",
+   description: "Pois Tieltä Oy",
+   icons: {
+      icon: "/favicon.svg",
+   },
+};
+
+export default async function Page({ params }) {
+   const { eventId } = await params;
+
+   const { data, error } = await getDocument('main_db', 'events', eventId);
+
+   if (!data) {
+      return (
+         <div className="flex h-screen w-full items-center justify-center px-4 bg-orange-100">
+            <h1 className="text-2xl text-red-500 text-center">Tapahtuma ei löytynyt</h1>
+         </div>
+      )
+   }
+
+   if (error) {
+      return (
+         <div className="flex h-screen w-full items-center justify-center px-4 bg-orange-100">
+            <h1 className="text-2xl text-red-500 text-center">Internal Server Error 505</h1>
+         </div>
+      )
+   }
+
+   
+
+   // const { data: clientData, error: clientDataError } = await supabase
+   //    .from('client_data')
+   //    .select('*')
+   //    .eq('user_id', data[0].user_id);
+
+   // console.log(clientData)
+   // if (clientDataError) {
+   //    console.log(clientDataError)
+   //    return (
+   //       <div className="flex h-screen w-full items-center justify-center px-4 bg-orange-100">
+   //          <h1 className="text-2xl text-red-500 text-center">500 Internal Server Error</h1>
+   //       </div>
+   //    )
+   // }
+
+   if (data) {
+      return (
+         <div className="flex h-screen w-full items-center justify-center px-4 bg-orange-100 relative">
+            <RegisterForEventForm logo={data.users?.clientData?.logo ? data.users?.clientData?.logo : null} title={data.event_name} invintation_id={eventId} />
+         </div>
+      );
+   }
+
+}
