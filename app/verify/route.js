@@ -106,16 +106,15 @@ export async function GET(request) {
             );
         }
 
-        // Создаем ответ с редиректом
-        const response = NextResponse.redirect(new URL('http://localhost:3000'));
+        const response = NextResponse.redirect(new URL(process.env.NEXT_PUBLIC_URL));
 
-        // Устанавливаем куки в ответе
+     
         response.cookies.set({
             name: 'session_id',
             value: session.secret,
             httpOnly: true,
             secure: true,
-            sameSite: 'lax', // Меняем на lax для поддержки редиректов
+            sameSite: 'lax', 
             path: '/'
         });
 
