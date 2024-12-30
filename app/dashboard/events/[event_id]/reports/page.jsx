@@ -201,10 +201,8 @@ const ReportedPost = ({ post, toggleFullScreen, router, toast, mutateParent }) =
                      <DialogHeader>
                         <DialogTitle>Kaikki kuvan raportit</DialogTitle>
                         <DialogDescription>
-
                         </DialogDescription>
                         <div>
-
                            {post && post.reports.length !== 0 && post.reports.map((reason) => {
                               return (
                                  <div key={reason.$createdAt} className='my-2'>

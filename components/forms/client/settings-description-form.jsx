@@ -79,13 +79,13 @@ const SettingsDescriptionForm = ({ recordExists, user, fi_welcome_text, en_welco
 			</div>
 			<div className="w-full mt-5">
 				<div className='flex max-xl:flex-wrap'>
-					<div className='max-w-[50%] w-full mr-3 max-xl:max-w-full max-xl:mb-2 min-h-[190px]'>
+					<div className='max-w-[50%] w-full mr-3 max-xl:max-w-full max-xl:mb-2 min-h-[300px]'>
 						<h3 className='font-medium'>FI</h3>
-						<CKeditor content={fiContent} handleChange={handleFiContentChange} />
+						<CKeditor content={fiContent} handleChange={handleFiContentChange} editorType="medium" />
 					</div>
-					<div className='max-w-[50%] w-full ml-3 max-xl:max-w-full max-xl:ml-0 min-h-[190px]'>
+					<div className='max-w-[50%] w-full ml-3 max-xl:max-w-full max-xl:ml-0 min-h-[300px]'>
 						<h3 className='font-medium'>EN</h3>
-						<CKeditor content={enContent} handleChange={handleEnContentChange} />
+						<CKeditor content={enContent} handleChange={handleEnContentChange} editorType="medium" />
 					</div>
 				</div>
 				<Button

@@ -35,21 +35,10 @@ export default function RegisterForEventForm({ logo, title, invintation_id }) {
       setErrorMessage("");
 
       try {
-         const user = await signUpWithEmail(formData.email, formData.password, `${formData.first_name} ${formData.last_name}`);
+         const { error, data } = await signInWithEmail(formData.email, {register: true, first_name: formData.first_name, last_name: formData.last_name, invintation_id: invintation_id, email: formData.email});
 
-         if (user) {
-            const { data, error } = await updateDocument("main_db", "users", user.$id, {
-               active_event: invintation_id
-            })
+         setMessage("Kutsulinkki lähetettiin sähköpostiisi, katso myös roskapostikansio.");
 
-            if (error) {
-               console.log('Error update user info:', error.message)
-               setErrorMessage(error.message);
-               return;
-            }
-
-            setMessage("Kutsulinkki lähetettiin sähköpostiisi, katso myös roskapostikansio.");
-         }
       } catch (error) {
          console.log('Error sing up:', error.message);
       }
@@ -84,44 +73,43 @@ export default function RegisterForEventForm({ logo, title, invintation_id }) {
       setMessage("");
       setErrorMessage("");
 
-      const { error, data } = await signInWithEmail(formData.email, formData.password);
+      const { error, data } = await signInWithEmail(formData.email, {register: false, invintation_id: invintation_id});
 
-      console.log(data.userId, "data.userIddata.userIddata.userIddata.userId")
+      console.log(data)
+      // if (error) {
+      //    setErrorMessage(error.message);
+      //    console.log('Error logging in:', error.message);
+      //    return;
+      // }
 
-      if (error) {
-         setErrorMessage(error.message);
-         console.log('Error logging in:', error.message);
-         return;
-      }
+      // if (!error && data) {
+      //    console.log("ACTIVE EVENT UPDATE DOCUMENT")
 
-      if (!error && data) {
-         console.log("ACTIVE EVENT UPDATE DOCUMENT")
+      //    const { error: updateError } = await updateDocument("main_db", "users", data.userId, {
+      //       active_event: invintation_id
+      //    })
 
-         const { error: updateError } = await updateDocument("main_db", "users", data.userId, {
-            active_event: invintation_id
-         })
+      //    if (updateError) {
+      //       console.log('Error update user info:', updateError.message)
+      //       setErrorMessage(updateError.message);
+      //       return;
+      //    }
 
-         if (updateError) {
-            console.log('Error update user info:', updateError.message)
-            setErrorMessage(updateError.message);
-            return;
-         }
+      //    const { error: createError } = await createDocument("main_db", "event_member", {
+      //       body: {
+      //          events: invintation_id,
+      //          users: data.userId
+      //       }
+      //    })
 
-         const { error: createError } = await createDocument("main_db", "event_member", {
-            body: {
-               events: invintation_id,
-               users: data.userId
-            }
-         })
-         
-         if (createError) {
-            console.log('Error update user info:', updateError.message)
-            setErrorMessage(createError.message);
-            return;
-         }
+      //    if (createError) {
+      //       console.log('Error update user info:', updateError.message)
+      //       setErrorMessage(createError.message);
+      //       return;
+      //    }
 
-         router.push("/event/" + invintation_id);
-      }
+      //    router.push("/event/" + invintation_id);
+      // }
       // if (error && error.message === "Invalid login credentials") {
       //    setErrorMessage("Virheellinen käyttäjätunnus tai salasana");
       //    console.log('Error logging in:', error.message);
@@ -133,7 +121,7 @@ export default function RegisterForEventForm({ logo, title, invintation_id }) {
       //    console.log('Error logging in:', error.message);
       //    return;
       // }
-      
+
    };
 
 
@@ -185,15 +173,6 @@ export default function RegisterForEventForm({ logo, title, invintation_id }) {
                   />
                   {errors.email && <p className="text-red-500 text-sm -mt-1">{errors.email.message}</p>}
                </div>
-               <div className="grid gap-2">
-                  <Label htmlFor="password">Salasana</Label>
-                  <Input
-                     id="password"
-                     type="password"
-                     {...register("password", { required: "Salasana on pakollinen" })}
-                  />
-                  {errors.password && <p className="text-red-500 text-sm -mt-1">{errors.password.message}</p>}
-               </div>
                {activeRegisterForm
                   ? (
                      <Fragment>
@@ -208,9 +187,6 @@ export default function RegisterForEventForm({ logo, title, invintation_id }) {
                      </Fragment>
                   ) : (
                      <Fragment>
-                        <div className="w-full text-right">
-                           <Link href="/reset-password" className="text-gray-700 hover:underline underline-offset-2">Unohditko salasana?</Link>
-                        </div>
                         <Button
                            type="submit"
                            className="w-full text-md bg-orange-400 hover:bg-orange-500 cursor-pointer !text-white"

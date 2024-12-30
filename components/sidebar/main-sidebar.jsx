@@ -20,9 +20,6 @@ export function MainSidebar({ user }) {
           ? <img className="max-h-[100px] h-full" src={storage.getFileView("logos", user.clientData.logo)} />
           : <span className="text-lg text-orange-500 font-bold">Company Logo</span>
         }
-
-
-
       </SidebarHeader>
 
       {user.role === "client" && <ClientSidebarContent user={user} />}

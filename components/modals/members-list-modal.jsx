@@ -62,7 +62,7 @@ const MembersListModal = () => {
          <CommandInput placeholder="Etsi osallistujat..." />
          <CommandList>
             <CommandEmpty>
-               Tulosta ei löytynyt
+               Ei osallistuja
             </CommandEmpty>
             {eventMembers.map((member) => (
                <CommandItem

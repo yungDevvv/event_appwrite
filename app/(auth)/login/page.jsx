@@ -16,7 +16,7 @@ import {
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { signInWithEmail } from "@/lib/appwrite/server/appwrite";
+import { signInAdminDashboard } from "@/lib/appwrite/server/appwrite";
 
 
 export default function Page() {
@@ -31,7 +31,7 @@ export default function Page() {
     setErrorMessage("");
     setIsLoading(true);
 
-    const { data, error } = await signInWithEmail(formData.email, formData.password);
+    const { data, error } = await signInAdminDashboard(formData.email, formData.password);
 
     console.log(data, error)
 
@@ -53,7 +53,6 @@ export default function Page() {
       <Card className="mx-auto w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl">Kirjaudu sisään</CardTitle>
-          <CardDescription>Onnistuneen kirjautumisen jälkeen sinut ohjataan tapahtumasivulle</CardDescription>
         </CardHeader>
         <CardContent>
 

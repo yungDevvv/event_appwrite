@@ -112,7 +112,15 @@ ul {
 .ck.ck-dropdown .ck-dropdown__panel.ck-dropdown__panel-visible {
   max-width: 400px;
 }
-
+.ck-editor__editable_inline[data-editor-type="large"] {
+  min-height: 300px !important;
+}
+.ck-editor__editable_inline[data-editor-type="medium"] {
+  min-height: 250px !important;
+}
+/* .ck-editor__editable_inline[data-editor-type="small"] {
+  min-height: 190px !important;
+} */
 /* .editor-container_classic-editor .editor-container__editor {
 	min-width: 795px;
 	max-width: 795px;

@@ -4,7 +4,7 @@ import { getLoggedInUser } from "@/lib/appwrite/server/appwrite";
 
 export default async function Page() {
    const user = await getLoggedInUser();
-   ;
+   console.log(user)
 
    if (user.role === "member") {
       return redirect("/login");

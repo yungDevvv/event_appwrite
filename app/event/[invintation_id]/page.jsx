@@ -20,7 +20,7 @@ import { useTranslations } from 'next-intl';
 import LanguageSwitcher from '@/components/language-switcher';
 import { useLocale } from "next-intl";
 import { useEventContext } from "@/context/EventContext";
-import { ArrowLeftFromLine, Info } from 'lucide-react';
+import { ArrowLeftFromLine, Calendar, Info, MapPin, Smile } from 'lucide-react';
 import { storage } from "@/lib/appwrite/client/appwrite";
 import { signOut } from "@/lib/appwrite/server/appwrite";
 
@@ -37,159 +37,164 @@ export default function Page({ params }) {
    const origin = useOrigin();
 
    return (
-      <div className='text-white  h-full'>
-         <section className='relative h-[300px]'>
-            {userData && userData.role === "client" && (
-               <Button variant="icon" className=" absolute top-5 left-5 z-10" asChild>
-                  <Link href="/dashboard/events" className='bg-clientprimary hover:bg-clientprimaryhover'>
-                     <ArrowLeftFromLine />
-                  </Link>
+      <div className='text-white min-h-screen bg-[#050505]'>
+         <nav className="fixed bottom-0 left-0 right-0 bg-black backdrop-blur-lg z-10 py-5 px-4 border-t border-zinc-900">
+            <div className="flex justify-between items-center max-w-[900px] mx-auto">
+               {userData && userData.role === "client" && (
+                  <Button variant="icon" className="bg-[#FF8F00] hover:bg-[#FFA726] transition-all" asChild>
+                     <Link href="/dashboard/events">
+                        <ArrowLeftFromLine className="w-5 h-5" />
+                     </Link>
+                  </Button>
+               )}
+               <LanguageSwitcher />
+               <Button variant="icon" className="bg-[#FF8F00] hover:bg-[#FFA726] transition-all" onClick={() => setInfoModalOpen(true)}>
+                  <Info className='w-5 h-5' />
                </Button>
-            )}
-            <LanguageSwitcher className={"absolute top-5 right-5 z-10"} />
-            <Button variant="icon" className="cursor-pointer absolute top-[70px] right-5 z-20 border w-[82px] h-[42px] p-2 text-base" onClick={() => setInfoModalOpen(true)}>
-               <Info className='mr-2 w-5 h-5' />
-               <span>{t("f28")}</span>
-            </Button>
-            <img
-               src="https://crossmedia.fi/holvi/poistielta/img/banner-monkija.jpg"
-               alt="Monkija Banner"
-               className="absolute inset-0 w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-black/50" />
-            <div className='relative z-10 top-[20%]'>
-               {eventData.users.clientData && eventData.users.clientData?.logo && (
-                  <div className='flex justify-center w-full'>
-                     <img src={storage.getFileView("logos", eventData.users.clientData.logo)} className='w-40 text-center' alt="Logo" />
+            </div>
+         </nav>
+         <div className="pb-12">
+            <div className="relative h-[30vh] flex items-center justify-center" >
+               <img
+                  src="https://crossmedia.fi/holvi/poistielta/img/banner-monkija.jpg"
+                  alt="Monkija Banner"
+                  className="absolute inset-0 w-full h-full object-cover"
+               />
+               <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-black/80 to-black/30" />
+
+               <div className='relative z-10 px-4 text-center'>
+                  {eventData.users.clientData && eventData.users.clientData?.logo && (
+                     <img
+                        src={storage.getFileView("logos", eventData.users.clientData.logo)}
+                        className='w-24 mx-auto mb-4 drop-shadow-2xl'
+                        alt="Logo"
+                     />
+                  )}
+                  <h1 className='font-bold text-3xl mb-2 drop-shadow-lg'>{t("v1")}</h1>
+                  <p className='text-xl text-[#FF8F00] font-medium'>{eventData.event_name}</p>
+               </div>
+            </div>
+
+            <div className="px-4 py-8 bg-black/10 backdrop-blur-sm">
+               <div className="max-w-[900px] mx-auto grid gap-8">
+
+                  <div className="grid grid-cols-1 gap-4">
+                     <Button className="py-6 bg-[#FF8F00] hover:bg-[#FFA726] transition-all shadow-lg shadow-orange-900/20">
+                        <Link href={`/event/${invintation_id}/feed`} className='text-base font-medium'>
+                           {t("v2")}
+                        </Link>
+                     </Button>
+
+                     {eventData.users.clientData && eventData.users.clientData?.google_link && (
+                        <Button className="py-6 bg-[#FF8F00] hover:bg-[#FFA726] transition-all shadow-lg shadow-orange-900/20">
+                           <a
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              href={eventData.users.clientData?.google_link}
+                              className='text-base font-medium'
+                           >
+                              {t("v3")}
+                           </a>
+                        </Button>
+                     )}
+
+                     <Button
+                        className="text-base py-6 bg-[#FF8F00] hover:bg-[#FFA726] transition-all shadow-lg shadow-orange-900/20"
+                        onClick={async () => {
+                           const result = await signOut();
+                           if (result.redirect) {
+                              router.push(result.redirect);
+                           }
+                        }}
+                     >
+                        {t("v4")}
+                     </Button>
                   </div>
-               )}
-               <h1 className='text-center font-semibold text-3xl mb-5'>{t("v1")}</h1>
-               <p className='text-center text-xl text-clientprimary'>{eventData.event_name}</p>
-            </div>
-         </section>
-         <section className="max-w-[900px] py-5 px-2 flex max-md:block items-center justify-center space-x-4 max-md:space-x-0 max-md:space-y-3 container mx-auto">
-            <Button className="py-6 bg-clientprimary hover:bg-clientprimary max-md:w-full">
-               <Link
-                  href={`/event/${invintation_id}/feed`}
-                  className='text-lg'
-               >
-                  {t("v2")}
-               </Link>
-            </Button>
 
-            {eventData.users.clientData && eventData.users.clientData?.google_link && (
-               <Button className="py-6 bg-clientprimary hover:bg-clientprimary max-md:w-full">
-                  <a
-                     target="_blank"
-                     rel="noopener noreferrer"
-                     href={eventData.users.clientData?.google_link}
-                     className='text-lg'
-                  >
-                     {t("v3")}
-                  </a>
-               </Button>
-            )}
 
-            <Button className="text-lg py-6 bg-clientprimary hover:bg-clientprimary max-md:w-full" onClick={async () => await signOut()}>
-               {t("v4")}
-            </Button>
-         </section>
-         <section className='container mx-auto px-3 mb-5 max-w-[900px]'>
-            {eventData.users?.clientData &&
-               (
-                  eventData.users?.clientData?.fi_welcome_text && locale === "fi" && (
-                     <div
-                        className='text-white'
-                        dangerouslySetInnerHTML={{ __html: eventData.users?.clientData?.fi_welcome_text }}
-                     />
-                  )
-               )
-            }
-            {eventData.users?.clientData &&
-               (
-                  eventData.users?.clientData?.en_welcome_text && locale === "en" && (
-                     <div
-                        className='text-white'
-                        dangerouslySetInnerHTML={{ __html: eventData.users?.clientData?.en_welcome_text }}
-                     />
-                  )
-               )
-            }
-         </section>
-         <section className="container mx-auto px-3 flex my-7 text-lg max-w-[900px]">
-            <div>
-               {eventData?.event_time && <p>{t("v5")}</p>}
-               {eventData?.event_address && <p>{t("v6")}</p>}
-               {eventData?.instructions_file && <p>{t("v7")}</p>}
-               {eventData?.additional_services && eventData?.additional_services?.length !== 0 && (
-                  <p>{t("v8")}</p>
-               )}
-            </div>
-
-            <div className='ml-10'>
-               {eventData?.event_time && <p>{format(new Date(eventData.event_date), 'dd.MM.yyyy')} {eventData.event_time.slice(0, 5)}</p>}
-               {eventData?.event_address && <span>{eventData?.event_address}, </span>}
-               {eventData?.event_place && <span className="capitalize">{eventData?.event_place}</span>}
-               {eventData?.instructions_file && (
-                  <p>
-                     <Link target="_blank" rel="noopener noreferrer" className='text-white text-lg block underline' href={`https://supa.crossmedia.fi/storage/v1/object/public/${eventData?.instructions_file}`}>{t("v9")}</Link>
-                  </p>
-               )}
-
-               {eventData?.additional_services.length !== 0 && (
-                  <div>
-                     {eventData?.additional_services.join(", ")}
+                  <div className="prose prose-invert max-w-none">
+                     {eventData.users?.clientData && (
+                        locale === "fi" ? (
+                           <div dangerouslySetInnerHTML={{ __html: eventData.users.clientData.fi_welcome_text }} />
+                        ) : (
+                           <div dangerouslySetInnerHTML={{ __html: eventData.users.clientData.en_welcome_text }} />
+                        )
+                     )}
                   </div>
-               )}
+
+
+                  <div className="bg-[#0a0a0a] rounded-xl p-6 space-y-6 border border-zinc-900">
+                     <div className="grid gap-4">
+                        <div className="flex items-center space-x-4">
+                           <span className="text-lg"><Calendar className="text-[#FF8F00]" /></span>
+                           {eventData?.event_time && (
+                              <p className="text-lg">{format(new Date(eventData.event_date), 'dd.MM.yyyy')} {eventData.event_time.slice(0, 5)}</p>
+                           )}
+                        </div>
+
+                        <div className="flex items-center space-x-4">
+
+                           <span className="text-lg"><MapPin className="text-[#FF8F00]" /></span>
+
+                           <div>
+                              {eventData?.event_address && <span>{eventData?.event_address}, </span>}
+                              {eventData?.event_place && <span className="capitalize">{eventData?.event_place}</span>}
+                           </div>
+                        </div>
+
+                        {eventData?.instructions_file && (
+                           <div className="flex items-center space-x-4">
+                              <div className="w-8 h-8 rounded-full bg-[#FF8F00] flex items-center justify-center">
+                                 <span className="text-lg">📄</span>
+                              </div>
+                              <Link
+                                 target="_blank"
+                                 rel="noopener noreferrer"
+                                 className='text-white hover:text-[#FF8F00] transition-colors'
+                                 href={`https://supa.crossmedia.fi/storage/v1/object/public/${eventData?.instructions_file}`}
+                              >
+                                 {t("v9")}
+                              </Link>
+                           </div>
+                        )}
+
+                        {eventData?.additional_services && eventData?.additional_services?.length !== 0 && (
+                           <div className="flex items-center space-x-4">
+                              <span className="text-lg"><Smile className="text-[#FF8F00]" /></span>
+                              <div>
+                                 {eventData?.additional_services.join(", ")}
+                              </div>
+                           </div>
+                        )}
+                     </div>
+                  </div>
+
+                  <div className="space-y-8">
+                     <div className="prose prose-invert max-w-none">
+                        {eventData && (
+                           locale === "fi" ? (
+                              <div dangerouslySetInnerHTML={{ __html: eventData.fi_event_description }} />
+                           ) : (
+                              <div dangerouslySetInnerHTML={{ __html: eventData.en_event_description }} />
+                           )
+                        )}
+                     </div>
+
+                     <div className="prose prose-invert max-w-none">
+                        {eventClientData && (
+                           locale === "fi" ? (
+                              <div dangerouslySetInnerHTML={{ __html: eventClientData.fi_sub_description }} />
+                           ) : (
+                              <div dangerouslySetInnerHTML={{ __html: eventClientData.en_sub_description }} />
+                           )
+                        )}
+                     </div>
+                  </div>
+               </div>
             </div>
-         </section>
-         <section className='container mx-auto py-3 px-3 max-w-[900px]'>
-            {eventData &&
-               (
-                  eventData.fi_event_description && locale === "fi" && (
-                     <div
-                        className='text-white'
-                        dangerouslySetInnerHTML={{ __html: eventData.fi_event_description }}
-                     />
-                  )
-               )
-            }
-            {eventData &&
-               (
-                  eventData.en_event_description && locale === "en" && (
-                     <div
-                        className='text-white'
-                        dangerouslySetInnerHTML={{ __html: eventData.en_event_description }}
-                     />
-                  )
-               )
-            }
-         </section>
+         </div>
 
-         <section className='container mx-auto py-3 px-3 max-w-[900px]'>
-            {eventClientData &&
-               (
-                  eventClientData.fi_sub_description && locale === "fi" && (
-                     <div
-                        className='text-white'
-                        dangerouslySetInnerHTML={{ __html: eventClientData.fi_sub_description }}
-                     />
-                  )
-               )
-            }
-            {eventClientData &&
-               (
-                  eventClientData.en_sub_description && locale === "en" && (
-                     <div
-                        className='text-white'
-                        dangerouslySetInnerHTML={{ __html: eventClientData.en_sub_description }}
-                     />
-                  )
-               )
-            }
-         </section>
-
-         <Dialog onOpenChange={setInfoModalOpen} open={infoModalOpen} className="">
+         <Dialog onOpenChange={setInfoModalOpen} open={infoModalOpen}>
             <div className="rounded-md overflow-hidden">
                <DialogContent className="max-h-[90vh] overflow-y-auto">
                   <DialogHeader className="!text-left">
@@ -247,8 +252,6 @@ export default function Page({ params }) {
             </div>
 
          </Dialog>
-
       </div>
    );
 }
-

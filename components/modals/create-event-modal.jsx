@@ -24,6 +24,7 @@ import { useRouter } from 'next/navigation';
 import { cn, generateId, generateInviteId } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
+import { Separator } from "@/components/ui/separator";
 
 import dynamic from 'next/dynamic';
 import { createDocument, createFile, getLoggedInUser, updateDocument } from '@/lib/appwrite/server/appwrite';
@@ -39,6 +40,7 @@ const eventTypes = [
    { value: 'motocross', label: 'Motocross', image: '/images/motocross.jpg' },
    { value: 'monkijasafari', label: 'Mönkijäsafari', image: '/images/monkijasafari.jpg' },
    { value: 'sahkopyoraily', label: 'Sähköpyöräily', image: '/images/sahkopyoraily.jpg' },
+   { value: 'muu', label: 'Muu', image: '/images/default.jpg' }
 ];
 
 const minutes = ["00", "15", "30", "45"];
@@ -49,6 +51,9 @@ const formSchema = z.object({
       message: "Valitse tapahtumatyyppi."
    }),
    clientName: z.string().min(1, "Asiakkaan nimi vaaditaan."),
+   contactPerson: z.string().min(1, "Yhteyshenkilön nimi vaaditaan."),
+   contactEmail: z.string().email("Virheellinen sähköpostiosoite").min(1, "Sähköpostiosoite vaaditaan."),
+   contactPhone: z.string().min(1, "Puhelinnumero vaaditaan."),
    groupSize: z.preprocess((val) => Number(val), z.number().positive("Ryhmän koon on oltava suurempi kuin 0.")),
    eventAddress: z.string().min(1, "Tapahtuman osoite vaaditaan."),
    eventPlace: z.string().min(1, "Tapahtuman paikka vaaditaan."),
@@ -69,6 +74,8 @@ const CreateEventModal = () => {
    const [eventImage, setEventImage] = useState(null);
    const [eventDescriptionText, setEventDescriptionText] = useState(data?.event?.fi_event_description ? data.event.fi_event_description : "");
    const [enEventDescriptionText, setEnEventDescriptionText] = useState(data?.event?.en_event_description ? data.event.en_event_description : "");
+   const [customEventType, setCustomEventType] = useState("");
+   const [showCustomInput, setShowCustomInput] = useState(false);
 
    const handleChangeFI = (event, editor) => {
       const data = editor.getData();
@@ -84,6 +91,9 @@ const CreateEventModal = () => {
       defaultValues: {
          eventName: '',
          clientName: '',
+         contactPerson: '',
+         contactEmail: '',
+         contactPhone: '',
          eventDate: null,
          eventType: '',
          eventAddress: '',
@@ -130,6 +140,9 @@ const CreateEventModal = () => {
                   users: user.$id,
                   event_name: datar.eventName,
                   client_name: datar.clientName,
+                  contact_person: datar.contactPerson,
+                  contact_email: datar.contactEmail,
+                  contact_phone: datar.contactPhone,
                   group_size: datar.groupSize,
                   event_type: datar.eventType,
                   event_date: datar.eventDate,
@@ -207,9 +220,12 @@ const CreateEventModal = () => {
                eventImageUploadedFile = fileId;
             }
 
-            const { error: updateError } = await updateDocument("main_db", "client_data", data.event.$id, {
+            const { error: updateError } = await updateDocument("main_db", "events", data.event.$id, {
                event_name: datar.eventName,
                client_name: datar.clientName,
+               contact_person: datar.contactPerson,
+               contact_email: datar.contactEmail,
+               contact_phone: datar.contactPhone,
                group_size: datar.groupSize,
                event_type: datar.eventType,
                event_date: datar.eventDate,
@@ -269,6 +285,9 @@ const CreateEventModal = () => {
                   users: user.$id,
                   event_name: datar.eventName,
                   client_name: datar.clientName,
+                  contact_person: datar.contactPerson,
+                  contact_email: datar.contactEmail,
+                  contact_phone: datar.contactPhone,
                   group_size: datar.groupSize,
                   event_type: datar.eventType,
                   event_date: datar.eventDate,
@@ -339,6 +358,9 @@ const CreateEventModal = () => {
          reset({
             eventName: data.event.event_name || '',
             clientName: data.event.client_name || '',
+            contactPerson: data.event.contact_person || '',
+            contactEmail: data.event.contact_email || '',
+            contactPhone: data.event.contact_phone || '',
             eventDate: newEventDate || null,
             eventType: data.event.event_type || '',
             groupSize: data.event.group_size || 1,
@@ -356,9 +378,9 @@ const CreateEventModal = () => {
 
    return (
       <Dialog open={isModalOpen} onOpenChange={onClose}>
-         <DialogContent className='bg-white text-black p-0'>
-            <DialogHeader className='pt-3 px-6'>
-               <DialogTitle className='text-2xl text-center font-bold' onClick={() => console.log(form.getValues("instructionsFile"))}>
+         <DialogContent className='bg-white text-black p-0 max-h-[90vh] overflow-hidden flex flex-col'>
+            <DialogHeader className='py-3 px-6 sticky top-0 bg-white z-10 border-b'>
+               <DialogTitle className='text-2xl text-center font-bold'>
                   {data.edit
                      ? "Muokkaa tapahtuma"
                      : "Luo uusi tapahtuma"
@@ -367,7 +389,7 @@ const CreateEventModal = () => {
             </DialogHeader>
             <DialogDescription></DialogDescription>
             <Form {...form} onSubmit={form.handleSubmit(onSubmit)}>
-               <form onSubmit={form.handleSubmit(onSubmit)} className="px-6 space-y-2 max-sm:mx-0">
+               <form onSubmit={form.handleSubmit(onSubmit)} className="px-6 space-y-4 overflow-y-auto flex-1 pb-5">
                   <div className="flex max-sm:block max-sm:space-y-3">
 
                      {/* Client Name */}
@@ -401,7 +423,61 @@ const CreateEventModal = () => {
                      />
                   </div>
 
-                  <div className="flex max-sm:block max-sm:space-y-3">
+                  <Separator className="!my-4" />
+
+                  <div className="space-y-4">
+                     <h3 className="text-lg font-medium">Yhteystiedot</h3>
+                     <div className="flex gap-4 max-[900px]:flex-wrap">
+                        {/* Contact Person */}
+                        <FormField
+                           control={form.control}
+                           name="contactPerson"
+                           render={({ field }) => (
+                              <FormItem className="w-full">
+                                 <FormLabel>Yhteyshenkilö</FormLabel>
+                                 <FormControl>
+                                    <Input {...field} />
+                                 </FormControl>
+                                 <FormMessage />
+                              </FormItem>
+                           )}
+                        />
+
+                        {/* Contact Email */}
+                        <FormField
+                           control={form.control}
+                           name="contactEmail"
+                           render={({ field }) => (
+                              <FormItem className="w-full">
+                                 <FormLabel>Sähköposti</FormLabel>
+                                 <FormControl>
+                                    <Input type="email" {...field} />
+                                 </FormControl>
+                                 <FormMessage />
+                              </FormItem>
+                           )}
+                        />
+
+                        {/* Contact Phone */}
+                        <FormField
+                           control={form.control}
+                           name="contactPhone"
+                           render={({ field }) => (
+                              <FormItem className="w-full">
+                                 <FormLabel>Puhelinnumero</FormLabel>
+                                 <FormControl>
+                                    <Input type="tel" {...field} />
+                                 </FormControl>
+                                 <FormMessage />
+                              </FormItem>
+                           )}
+                        />
+                     </div>
+                  </div>
+
+                  <Separator className="!my-4" />
+
+                  <div className="flex items-center max-sm:block max-sm:space-y-3 ">
 
                      {/* Event Address */}
                      <FormField
@@ -544,22 +620,43 @@ const CreateEventModal = () => {
                            <FormItem className="ml-1 max-sm:ml-0 w-full">
                               <FormLabel className="block mb-1">Tapahtuman tyyppi</FormLabel>
                               <FormControl>
-                                 <Select
-                                    onValueChange={field.onChange}
-                                 >
-                                    <SelectTrigger className="w-full capitalize">
-                                       <SelectValue placeholder={data && data?.event?.event_type ? data.event.event_type : "Valitse tapahtuman tyyppi"} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                       <SelectGroup>
-                                          {eventTypes.map((type) => (
-                                             <SelectItem key={type.value} value={type.value}>
-                                                {type.label}
-                                             </SelectItem>
-                                          ))}
-                                       </SelectGroup>
-                                    </SelectContent>
-                                 </Select>
+                                 <div className="space-y-2">
+                                    <Select onValueChange={(value) => {
+                                       if (value === 'muu') {
+                                          setShowCustomInput(true);
+                                       } else {
+                                          setShowCustomInput(false);
+                                          setCustomEventType("");
+                                       }
+                                       field.onChange(value);
+                                    }}>
+                                       <SelectTrigger className="w-full capitalize">
+                                          <SelectValue placeholder={data && data?.event?.event_type ? data.event.event_type : "Valitse tapahtuman tyyppi"} />
+                                       </SelectTrigger>
+                                       <SelectContent>
+                                          <SelectGroup>
+                                             {eventTypes.map((type) => (
+                                                <SelectItem key={type.value} value={type.value}>
+                                                   {type.label}
+                                                </SelectItem>
+                                             ))}
+                                          </SelectGroup>
+                                       </SelectContent>
+                                    </Select>
+                                    {showCustomInput && (
+                                       <Input
+                                          placeholder="Kirjoita oma tapahtuman tyyppi"
+                                          value={customEventType}
+                                          onChange={(e) => {
+                                             const newValue = e.target.value;
+                                             setCustomEventType(newValue);
+                                             if (newValue.trim() !== '') {
+                                                field.onChange(newValue);
+                                             }
+                                          }}
+                                       />
+                                    )}
+                                 </div>
                               </FormControl>
                               <FormMessage />
                            </FormItem>
@@ -588,13 +685,13 @@ const CreateEventModal = () => {
 
                   <div className='w-full'>
                      <FormLabel>Ohjelma - FI / EN</FormLabel>
-                     <div className='flex'>
-                        <div className='max-w-[50%] min-h-[190px] w-full mr-1'>
+                     <div className='flex max-[1100px]:flex-wrap'>
+                        <div className='max-w-[50%] max-[1100px]:max-w-[99%] min-h-[190px] w-full mr-1'>
                            <CKeditor
                               content={eventDescriptionText}
                               handleChange={handleChangeFI} />
                         </div>
-                        <div className='max-w-[50%] w-full min-h-[190px] ml-1'>
+                        <div className='max-w-[50%] max-[1100px]:max-w-[99%] w-full min-h-[190px] ml-1 max-[1100px]:ml-0 max-[1100px]:mt-2'>
                            <div className=' relative'>
                               <CKeditor
                                  content={enEventDescriptionText}
@@ -692,12 +789,11 @@ const CreateEventModal = () => {
                         )}
                      />
                   </div>
-
-                  <DialogFooter className="pb-3">
-                     {data?.duplicate && <Button className="bg-clientprimary hover:bg-clientprimaryhover" type="submit" disabled={isLoading}>{isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "Tallenna"}</Button>}
-                     {!data?.duplicate && <Button className="bg-clientprimary hover:bg-clientprimaryhover" type="submit" disabled={isLoading}>{isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : data.edit ? "Tallenna" : "Tallenna"}</Button>}
-                  </DialogFooter>
                </form>
+               <DialogFooter className="pb-3 sticky bottom-0 bg-white border-t p-4 ">
+                  {data?.duplicate && <Button className="bg-clientprimary hover:bg-clientprimaryhover text-base" type="submit" disabled={isLoading}>{isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "Tallenna"}</Button>}
+                  {!data?.duplicate && <Button className="bg-clientprimary hover:bg-clientprimaryhover text-base" type="submit" disabled={isLoading}>{isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : data.edit ? "Tallenna" : "Tallenna"}</Button>}
+               </DialogFooter>
             </Form>
          </DialogContent>
       </Dialog>
@@ -705,7 +801,3 @@ const CreateEventModal = () => {
 }
 
 export default CreateEventModal;
-
-
-// create-event-modal.jsx:307 Uncaught (in promise) ReferenceError: eventImageFileName is not defined
-//     at onSubmit (create-event-modal.jsx:307:27)

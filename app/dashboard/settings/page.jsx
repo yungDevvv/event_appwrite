@@ -1,6 +1,7 @@
 import SettingsDescriptionForm from "@/components/forms/client/settings-description-form";
 import SettingsGoogleForm from "@/components/forms/client/settings-google-form";
 import SettingsLogoForm from "@/components/forms/client/settings-logo-form";
+import OrderConfirmationForm from "@/components/forms/client/settings-order-confirmation-form";
 import SettingsOtherForm from "@/components/forms/client/settings-other-form";
 import SettingsPrivacyForm from "@/components/forms/client/settings-privacy-form";
 import { getLoggedInUser } from "@/lib/appwrite/server/appwrite";
@@ -49,6 +50,13 @@ export default async function Page() {
                user={user}
                recordExists={user.hasOwnProperty("clientData")}
                privacy={user.hasOwnProperty("clientData") && user.clientData.privacy ? JSON.parse(user.clientData.privacy) : null}
+            />
+         </section>
+         <section className="my-6">
+            <OrderConfirmationForm
+               user={user}
+               recordExists={user.hasOwnProperty("clientData")}
+               order_confirmation={user.hasOwnProperty("clientData") && user.clientData.order_confirmation ? JSON.parse(user.clientData.order_confirmation) : null}
             />
          </section>
 

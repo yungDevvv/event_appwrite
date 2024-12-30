@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/alert-dialog"
 
 import { format } from 'date-fns';
-import { Check, Copy, Delete, EllipsisVertical, Eye, ImageOff, ImagePlay, Images, Pencil, PencilRuler, ShieldAlert, UserRound, Link as LucideLink } from "lucide-react";
+import { Check, Copy, Delete, EllipsisVertical, Eye, ImageOff, ImagePlay, Images, Pencil, PencilRuler, ShieldAlert, UserRound, Link as LucideLink, MailPlus, QrCode } from "lucide-react";
 import { forwardRef, useState, useEffect, Fragment } from "react";
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation";
@@ -43,11 +43,12 @@ import Link from "next/link";
 import { useModal } from "@/hooks/use-modal";
 import { Button } from "../ui/button";
 import { getDocument, deleteDocument, updateDocument } from "@/lib/appwrite/server/appwrite";
-
+import SendConfirmationModal from "../modals/send-confirmation-modal";
 
 const EventsTable = ({ user }) => {
    const [copied, setCopied] = useState(false);
    const [tab, setTab] = useState();
+   const [openDropdownId, setOpenDropdownId] = useState(null);
 
    const { toast } = useToast()
    const router = useRouter();
@@ -77,7 +78,7 @@ const EventsTable = ({ user }) => {
    const onCopy = (invintation_id) => {
       const inviteUrl = `${origin}/register-for-event/${invintation_id}`;
 
-      navigator.clipboard.writeText(inviteUrl); 
+      navigator.clipboard.writeText(inviteUrl);
       setCopied(true);
 
       setTimeout(() => {
@@ -104,8 +105,6 @@ const EventsTable = ({ user }) => {
          description: "Diaesitys on nyt pysäytetty!"
       })
    }
-
-   const [openDropdownId, setOpenDropdownId] = useState(null);
 
    const [isClient, setIsClient] = useState(false);
 
@@ -164,7 +163,7 @@ const EventsTable = ({ user }) => {
                                  <MenubarMenu>
                                     <MenubarTrigger onClick={() => setTab(event.$id)} asChild>
                                        <Button className="hover:bg-zinc-200 p-1 rounded-md relative cursor-pointer" variant="icon">
-                                          {event.event_posts_reports?.length && openDropdownId !== event.$id && (
+                                          {event.event_posts_reports?.length !== 0 && openDropdownId !== event.$id && (
                                              <div className="bg-red-500 text-white rounded-full absolute w-4 h-4 flex items-center justify-center -top-1 -right-1" title="Ilmiannetut julkaisut">
                                                 {event.event_posts_reports?.length}
                                              </div>
@@ -199,19 +198,32 @@ const EventsTable = ({ user }) => {
                                           </MenubarSubContent>
                                        </MenubarSub>
 
+                                       <MenubarItem className="text-sm" onClick={async () => {
+                                          onOpen("send-order-confirmation-modal", { event, user })
+                                          setOpenDropdownId(null);
+                                       }}>
+                                          <MailPlus size={18} className="mr-2" />
+                                          <span>Lähetä tilausvahvistus</span>
+                                       </MenubarItem>
+
                                        <MenubarItem className="text-sm" asChild>
                                           <Link className="flex" href={"/event/" + event.invintation_id}>
                                              <Eye size={18} className="mr-2" />
                                              <span>Näytä</span>
                                           </Link>
                                        </MenubarItem>
-
+                                       <MenubarItem className="text-sm" asChild>
+                                          <Link className="flex" href={"/dashboard/events/" + event.invintation_id + "/qr"}>
+                                             <QrCode size={18} className="mr-2" /> 
+                                             <span>QR-koodi</span>
+                                          </Link>
+                                       </MenubarItem>
                                        <MenubarItem className="text-sm" onClick={() => onCopy(event.invintation_id)}>
                                           {copied ? <Check size={18} className="mr-2" /> : <LucideLink size={18} className="mr-2" />}
                                           <span>Kopioi kutsulinkki</span>
                                        </MenubarItem>
 
-                                       <MenubarItem className="text-sm" onClick={async() => {
+                                       <MenubarItem className="text-sm" onClick={async () => {
                                           onOpen("event-members-list", { event: await getDocument("main_db", "events", event.$id), user_id: user.$id })
                                           setOpenDropdownId(null);
                                        }}>
@@ -223,7 +235,7 @@ const EventsTable = ({ user }) => {
                                           <Link className="flex" href={"/dashboard/events/" + event.$id + "/reports"}>
                                              <ShieldAlert size={18} className="mr-2" />
                                              <span>Ilmiannetut julkaisut</span>
-                                             {event.event_posts_reports?.length && (
+                                             {event.event_posts_reports?.length !== 0 && (
                                                 <div className="bg-red-500 text-white rounded-full absolute w-4 h-4 flex items-center justify-center -top-1 -right-1" title="Ilmiannetut julkaisut">
                                                    {event.event_posts_reports?.length}
                                                 </div>
@@ -269,7 +281,8 @@ const EventsTable = ({ user }) => {
                   }
                </TableBody>
             </Table>
-         </div >
+         </div>
+
       </>
    )
 }
@@ -300,4 +313,3 @@ const ConfirmDialog = forwardRef(({ deleteEvent, eventId }, ref) => {
 ConfirmDialog.displayName = "ConfirmDialog";
 
 export default EventsTable;
-

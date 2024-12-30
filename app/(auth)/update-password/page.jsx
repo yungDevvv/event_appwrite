@@ -1,96 +1,96 @@
 "use client"
 
-import {
-   Card,
-   CardContent,
-   CardHeader,
-   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Loader2 } from "lucide-react";
+// import {
+//    Card,
+//    CardContent,
+//    CardHeader,
+//    CardTitle,
+// } from "@/components/ui/card";
+// import { Button } from "@/components/ui/button";
+// import { Input } from "@/components/ui/input";
+// import { Label } from "@/components/ui/label";
+// import { Loader2 } from "lucide-react";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useOrigin } from "@/hooks/use-origin";
+// import { useEffect, useState } from "react";
+// import { useRouter } from "next/navigation";
+// import { useOrigin } from "@/hooks/use-origin";
 
 export default function Page({ searchParams }) {
    // const event_invite_id = searchParams.event_invite_id;
 
-   const origin = useOrigin();
+   // const origin = useOrigin();
 
-   const router = useRouter();
+   // const router = useRouter();
 
-   const [password, setPassword] = useState("");
-   const [confirmPassword, setConfirmPassword] = useState("");
+   // const [password, setPassword] = useState("");
+   // const [confirmPassword, setConfirmPassword] = useState("");
 
-   const [passwordError, setPasswordError] = useState("");
-   const [confirmPasswordError, setConfirmPasswordError] = useState("");
+   // const [passwordError, setPasswordError] = useState("");
+   // const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
-   const [errorMessage, setErrorMessage] = useState("");
-   const [isLoading, setIsLoading] = useState(false);
+   // const [errorMessage, setErrorMessage] = useState("");
+   // const [isLoading, setIsLoading] = useState(false);
 
-   const updatePassword = async (e) => {
-      e.preventDefault();
+   // const updatePassword = async (e) => {
+   //    e.preventDefault();
 
-      setConfirmPasswordError("");
-      setPasswordError("");
-      setErrorMessage("");
+   //    setConfirmPasswordError("");
+   //    setPasswordError("");
+   //    setErrorMessage("");
 
-      if (!password) {
-         setPasswordError("Salasana on pakollinen");
+   //    if (!password) {
+   //       setPasswordError("Salasana on pakollinen");
 
-      }
-      if (!confirmPassword) {
-         setConfirmPasswordError("Salasanan vahvistus on pakollinen");
-      }
+   //    }
+   //    if (!confirmPassword) {
+   //       setConfirmPasswordError("Salasanan vahvistus on pakollinen");
+   //    }
 
-      if (!password || !confirmPassword) return;
+   //    if (!password || !confirmPassword) return;
 
-      if (password !== confirmPassword) {
-         setErrorMessage("Salasanat eivät täsmää. Varmista, että olet kirjoittanut saman salasanan molempiin kenttiin.");
-         return;
-      }
+   //    if (password !== confirmPassword) {
+   //       setErrorMessage("Salasanat eivät täsmää. Varmista, että olet kirjoittanut saman salasanan molempiin kenttiin.");
+   //       return;
+   //    }
 
-      setIsLoading(true);
+   //    setIsLoading(true);
 
-      ;
-      const { data, error } = await supabase.auth.updateUser({
-         password
-      })
+   //    ;
+   //    const { data, error } = await supabase.auth.updateUser({
+   //       password
+   //    })
 
-      if(error) {
-         setIsLoading(false);
-         if (error.code === "same_password") {
-            console.log(error);
-            setErrorMessage("Uuden salasanan tulee olla erilainen kuin vanha salasana.");
-            return;
-         } else {
-            console.log(error);
-            setErrorMessage("Oops, tapahtui virhe!");
-            return;
-         }
-      }
+   //    if(error) {
+   //       setIsLoading(false);
+   //       if (error.code === "same_password") {
+   //          console.log(error);
+   //          setErrorMessage("Uuden salasanan tulee olla erilainen kuin vanha salasana.");
+   //          return;
+   //       } else {
+   //          console.log(error);
+   //          setErrorMessage("Oops, tapahtui virhe!");
+   //          return;
+   //       }
+   //    }
       
-      if(data && data.user) {
-         router.push(origin + "/");
-      }
+   //    if(data && data.user) {
+   //       router.push(origin + "/");
+   //    }
       
-      setIsLoading(false);
-   }
+   //    setIsLoading(false);
+   // }
 
-   useEffect(() => {
-      if (password) {
-         setPasswordError("");
-      }
-      if (confirmPassword) {
-         setConfirmPasswordError("");
-      }
-   }, [password, confirmPassword])
+   // useEffect(() => {
+   //    if (password) {
+   //       setPasswordError("");
+   //    }
+   //    if (confirmPassword) {
+   //       setConfirmPasswordError("");
+   //    }
+   // }, [password, confirmPassword])
    return (
       <div className="flex h-screen w-full items-center justify-center px-4 bg-orange-100">
-         <Card className="mx-auto w-full max-w-md">
+         {/* <Card className="mx-auto w-full max-w-md">
             <CardHeader>
                <CardTitle className="text-xl">
                   Päivitä salasana
@@ -130,7 +130,7 @@ export default function Page({ searchParams }) {
                   </Button>
                </form>
             </CardContent>
-         </Card>
+         </Card> */}
       </div>
    )
 }

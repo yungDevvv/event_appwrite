@@ -4,7 +4,7 @@ import '../../../custom.css'
 import UploadImage from "@/components/forms/upload-image";
 import { PostList } from "@/components/post-list";
 import { useEventContext } from "@/context/EventContext";
-import { useInfinitePosts } from "@/hooks/use-infinity-posts"
+// import { useInfinitePosts } from "@/hooks/use-infinity-posts"
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button";

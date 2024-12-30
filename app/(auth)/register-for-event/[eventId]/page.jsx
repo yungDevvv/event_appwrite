@@ -30,23 +30,6 @@ export default async function Page({ params }) {
       )
    }
 
-   
-
-   // const { data: clientData, error: clientDataError } = await supabase
-   //    .from('client_data')
-   //    .select('*')
-   //    .eq('user_id', data[0].user_id);
-
-   // console.log(clientData)
-   // if (clientDataError) {
-   //    console.log(clientDataError)
-   //    return (
-   //       <div className="flex h-screen w-full items-center justify-center px-4 bg-orange-100">
-   //          <h1 className="text-2xl text-red-500 text-center">500 Internal Server Error</h1>
-   //       </div>
-   //    )
-   // }
-
    if (data) {
       return (
          <div className="flex h-screen w-full items-center justify-center px-4 bg-orange-100 relative">
