@@ -100,11 +100,8 @@ export default function Page({ params }) {
 
                      <Button
                         className="text-base py-6 bg-[#FF8F00] hover:bg-[#FFA726] transition-all shadow-lg shadow-orange-900/20"
-                        onClick={async () => {
-                           const result = await signOut();
-                           if (result.redirect) {
-                              router.push(result.redirect);
-                           }
+                        onClick={() => {
+                           router.push(`/logout`)
                         }}
                      >
                         {t("v4")}

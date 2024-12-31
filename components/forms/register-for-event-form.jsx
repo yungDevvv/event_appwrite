@@ -13,11 +13,9 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
-import { Fragment, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useOrigin } from "@/hooks/use-origin";
-import { createDocument, signInWithEmail, signUpWithEmail, updateDocument } from "@/lib/appwrite/server/appwrite";
+import { Fragment, useState } from "react";
+
+import { signInWithEmail } from "@/lib/appwrite/server/appwrite";
 import { storage } from "@/lib/appwrite/client/appwrite";
 
 export default function RegisterForEventForm({ logo, title, invintation_id }) {
@@ -27,17 +25,15 @@ export default function RegisterForEventForm({ logo, title, invintation_id }) {
    const [errorMessage, setErrorMessage] = useState("");
    const [activeRegisterForm, setActiveRegisterForm] = useState(true);
 
-   const origin = useOrigin();
-   const router = useRouter();
 
    const handleRegister = async (formData) => {
       setMessage("");
       setErrorMessage("");
 
       try {
-         const { error, data } = await signInWithEmail(formData.email, {register: true, first_name: formData.first_name, last_name: formData.last_name, invintation_id: invintation_id, email: formData.email});
+         const { error, data } = await signInWithEmail(formData.email, { register: true, first_name: formData.first_name, last_name: formData.last_name, invintation_id: invintation_id, email: formData.email });
 
-         setMessage("Kutsulinkki lähetettiin sähköpostiisi, katso myös roskapostikansio.");
+         setMessage("Kirjautumislinkki lähetettiin sähköpostiisi. Kyseessä on kertakäyttöinen linkki, joka toimii vain kirjautumista varten.");
 
       } catch (error) {
          console.log('Error sing up:', error.message);
@@ -73,9 +69,10 @@ export default function RegisterForEventForm({ logo, title, invintation_id }) {
       setMessage("");
       setErrorMessage("");
 
-      const { error, data } = await signInWithEmail(formData.email, {register: false, invintation_id: invintation_id});
+      setMessage("Kirjautumislinkki lähetettiin sähköpostiisi. Kyseessä on kertakäyttöinen linkki, joka toimii vain kirjautumista varten.");
 
-      console.log(data)
+      const { error, data } = await signInWithEmail(formData.email, { register: false, invintation_id: invintation_id });
+
       // if (error) {
       //    setErrorMessage(error.message);
       //    console.log('Error logging in:', error.message);

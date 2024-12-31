@@ -19,7 +19,7 @@ import { updateDocument } from '@/lib/appwrite/server/appwrite';
 
 export default function Page() {
    const { eventData, userData } = useEventContext();
-   console.log(eventData);
+  
    const t = useTranslations();
 
    const router = useRouter();

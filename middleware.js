@@ -2,8 +2,7 @@ import { NextResponse } from 'next/server';
 import { getLoggedInUser } from './lib/appwrite/server/appwrite';
 
 export async function middleware(request) {
- 
-
+  // Публичные пути, которые не требуют авторизации
   const publicPaths = [
     '/api',
     '/verify',
@@ -12,73 +11,52 @@ export async function middleware(request) {
     '/register-for-event',
     '/reset-password',
     '/update-password',
+    '/unathorized'
   ];
 
+  // Если путь публичный, пропускаем
   if (publicPaths.some((path) => request.nextUrl.pathname.startsWith(path))) {
-    try {
-      const user = await getLoggedInUser();
-
-      if (user) {
-        const url = request.nextUrl.clone();
-
-        if (user.role === "client" || user.role === "admin") {
-          url.pathname = '/dashboard/events';
-          return NextResponse.redirect(url);
-        } else {
-          if (user.active_event) {
-            url.pathname = `/event/${user.active_event}`;
-            return NextResponse.redirect(url);
-          } else {
-            return NextResponse.next();
-          }
-        }
-      }
-      return NextResponse.next();
-    } catch (error) {
-      console.log('Error in middleware:', error);
-      
-      const user = await getLoggedInUser();
-
-      if (user.role === "client" || user.role === "admin") {
-        url.pathname = '/login';
-        return NextResponse.redirect(url);
-      } else {
-        if (user.active_event) {
-          url.pathname = `/register-for-event/${user.active_event}`;
-          return NextResponse.redirect(url);
-        } else {
-          url.pathname = '/login';
-          return NextResponse.redirect(url);
-        }
-      }
-    }
+    return NextResponse.next();
   }
 
+  // Пытаемся получить пользователя, но перехватываем все ошибки
+  let user = null;
   try {
-    const user = await getLoggedInUser();
-
-    if (user) {
-      return NextResponse.next();
-    }
+    user = await getLoggedInUser();
   } catch (error) {
-    console.log('Error fetching user:', error);
+    // Если произошла ошибка, перенаправляем на unauthorized
+    const url = request.nextUrl.clone();
+    url.pathname = '/unathorized';
+    return NextResponse.redirect(url);
   }
 
-  const url = request.nextUrl.clone();
-  url.pathname = '/login';
-  return NextResponse.redirect(url);
+  return NextResponse.next();
+  // try {
+  //   // Проверяем роль пользователя
+  //   if (user.role === "client" || user.role === "admin") {
+  //     const url = request.nextUrl.clone();
+  //     url.pathname = '/dashboard/events';
+  //     return NextResponse.redirect(url);
+  //   }
+
+  //   // Проверяем активное событие
+  //   if (user.active_event) {
+  //     const url = request.nextUrl.clone();
+  //     url.pathname = `/event/${user.active_event}`;
+  //     return NextResponse.redirect(url);
+  //   }
+  // } catch (error) {
+  //   // Если что-то пошло не так при проверке ролей,
+  //   // просто пропускаем запрос дальше
+  //   // return NextResponse.next();
+  // }
+
+  // // По умолчанию пропускаем запрос
+  // return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
-     */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
-  

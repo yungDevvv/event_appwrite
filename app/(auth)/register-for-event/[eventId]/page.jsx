@@ -1,5 +1,6 @@
 import RegisterForEventForm from "@/components/forms/register-for-event-form";
-import { getDocument } from "@/lib/appwrite/server/appwrite";
+import { getDocument, getLoggedInUser } from "@/lib/appwrite/server/appwrite";
+import { redirect } from "next/navigation";
 
 export const metadata = {
    title: "Events Suosittelu Mylly",
@@ -10,6 +11,15 @@ export const metadata = {
 };
 
 export default async function Page({ params }) {
+   let user = null;
+   try {
+      user = await getLoggedInUser();
+      if (user && user?.role === "member") {
+         return redirect("/event/" + user.active_event);
+      }
+   } catch (error) {
+   }
+
    const { eventId } = await params;
 
    const { data, error } = await getDocument('main_db', 'events', eventId);
