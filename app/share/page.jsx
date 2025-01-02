@@ -1,19 +1,18 @@
-const getMimeTypeFromUrl = async (url) => {
+const getMimeTypeFromUrl = async (image_url) => {
    try {
-      const response = await fetch(url, { method: 'HEAD' });
-      const contentType = response.headers.get('Content-Type');
+      const image = await storage.getFile("event_images", image_url);
+      const type = image.mimeType.split("/")[0];
 
-      //   console.log(contentType)
-      if (contentType.includes('image')) {
-         return "image";
-      } else if (contentType.includes('video')) {
-         return'video';
+      if (type === 'image') {
+         return 'image';
+      } else if (type === 'video') {
+         return 'video';
       } else {
          return 'unknown';
       }
    } catch (error) {
       console.log('Error fetching the URL:', error);
-      return'unknown';
+      return 'unknown';
    }
 };
 

@@ -151,14 +151,14 @@ const ReportedPost = ({ post, toggleFullScreen, router, toast, mutateParent }) =
    }
 
    useEffect(() => {
-      const getMimeTypeFromUrl = async (url) => {
+      const getMimeTypeFromUrl = async (bucked_id, image_url) => {
          try {
-            const response = await fetch(url, { method: 'HEAD' });
-            const contentType = response.headers.get('Content-Type');
+            const image = await storage.getFile(bucked_id, image_url);
+            const type = image.mimeType.split("/")[0];
 
-            if (contentType.includes('image')) {
+            if (type === 'image') {
                setFileType('image');
-            } else if (contentType.includes('video')) {
+            } else if (type === 'video') {
                setFileType('video');
             } else {
                setFileType('unknown');
@@ -169,28 +169,28 @@ const ReportedPost = ({ post, toggleFullScreen, router, toast, mutateParent }) =
          }
       };
 
-      getMimeTypeFromUrl(storage.getFileView("event_images", post.image_url));
+      getMimeTypeFromUrl("event_images", post.image_url);
    }, [post]);
-  
+
    return (
       <Fragment>
          <div className="w-full flex max-sm:flex-col sm:flex-row my-5">
             <div className="max-sm:w-full sm:max-w-[200px] max-h-[200px] my-3 relative">
                <Search size={30} onClick={() => toggleFullScreen(storage.getFileView("event_images", post.image_url), fileType)} className="absolute top-3 right-3 text-clientprimary cursor-pointer z-10" />
                {fileType === "video" && (
-                  <video 
-                     autoPlay 
-                     muted 
-                     loop 
-                     controls 
-                     className="rounded-xl w-full h-full object-cover" 
-                     src={storage.getFileView("event_images", post.image_url)} 
+                  <video
+                     autoPlay
+                     muted
+                     loop
+                     controls
+                     className="rounded-xl w-full h-full object-cover"
+                     src={storage.getFileView("event_images", post.image_url)}
                   />
                )}
                {fileType === "image" && (
-                  <img 
-                     className="rounded-xl w-full h-full object-cover" 
-                     src={storage.getFileView("event_images", post.image_url)} 
+                  <img
+                     className="rounded-xl w-full h-full object-cover"
+                     src={storage.getFilePreview("event_images", post.image_url)}
                   />
                )}
             </div>
