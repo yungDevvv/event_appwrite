@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslations } from "next-intl";
 import { createDocument, createFile } from "@/lib/appwrite/server/appwrite";
+import { storage, ID } from "@/lib/appwrite/client/appwrite";
 
 export default function UploadImage({ user_id, event_id, mutate }) {
    const [image, setImage] = useState(null);
@@ -45,23 +46,26 @@ export default function UploadImage({ user_id, event_id, mutate }) {
    };
 
    const uploadImage = async () => {
+      const uniqueId = ID.unique();
       try {
          setLoading(true);
-        
+
          if (!image) return;
-       
-         let fileId = await createFile("event_images", image);
-       
-         const { error: createdEventError } = await createDocument("main_db", "event_posts", { 
+
+         // let fileId = await createFile("event_images", image);
+         let fileId = await storage.createFile("event_images", uniqueId, image);
+
+         const { error: createdEventError } = await createDocument("main_db", "event_posts", {
             body: {
                users: user_id,
                events: event_id,
-               image_url: fileId
+               image_url: fileId.$id
             }
          });
-       
+
 
          if (createdEventError) {
+            console.log(createdEventError)
             toast({
                variant: "supabaseError",
                description: "Tuntematon virhe kuvan latauksessa."
@@ -69,7 +73,7 @@ export default function UploadImage({ user_id, event_id, mutate }) {
 
             return;
          }
-   
+
          toast({
             variant: "success",
             title: "Kuva",

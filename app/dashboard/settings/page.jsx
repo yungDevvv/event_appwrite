@@ -8,7 +8,7 @@ import { getLoggedInUser } from "@/lib/appwrite/server/appwrite";
 
 export default async function Page() {
    const user = await getLoggedInUser();
-   console.log(user)
+
    return (
       <div>
          <section className="mb-6 mt-2">
