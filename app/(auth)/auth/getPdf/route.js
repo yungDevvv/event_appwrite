@@ -16,8 +16,7 @@ export async function GET(request) {
     if (error) {
         return NextResponse.json({ error: error.message }, { status: 400 });
     }
-
-    console.log(data)
+    
     const pdfUrl = "https://supa.crossmedia.fi/storage/v1/object/" + data.instructions_file;
 
     return NextResponse.redirect(pdfUrl);

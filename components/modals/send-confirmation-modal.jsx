@@ -11,7 +11,7 @@ import { useOrigin } from "@/hooks/use-origin"
 
 export default function SendConfirmationModal() {
    const { data: { event, user }, isOpen, onClose, type } = useModal();
-   console.log(user)
+  
    const isModalOpen = isOpen && type === "send-order-confirmation-modal";
    const [isSending, setIsSending] = useState(false);
 
@@ -55,7 +55,7 @@ export default function SendConfirmationModal() {
                            <div className="bg-muted p-3 rounded-md space-y-2">
                               <div className="flex justify-between">
                                  <span className="text-sm text-muted-foreground">Päivämäärä:</span>
-                                 {console.log(event?.event_date)}
+                               
                                  <span className="text-sm">{format(new Date(event?.event_date), 'dd.MM.yyyy')}</span>
                               </div>
                               <div className="flex justify-between">

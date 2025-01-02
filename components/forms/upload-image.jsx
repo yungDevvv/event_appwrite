@@ -47,11 +47,11 @@ export default function UploadImage({ user_id, event_id, mutate }) {
    const uploadImage = async () => {
       try {
          setLoading(true);
-         console.log("11111")
+        
          if (!image) return;
-         console.log("2222222")
+       
          let fileId = await createFile("event_images", image);
-         console.log("333333")
+       
          const { error: createdEventError } = await createDocument("main_db", "event_posts", { 
             body: {
                users: user_id,
@@ -59,7 +59,7 @@ export default function UploadImage({ user_id, event_id, mutate }) {
                image_url: fileId
             }
          });
-         console.log("44444")
+       
 
          if (createdEventError) {
             toast({
@@ -69,9 +69,7 @@ export default function UploadImage({ user_id, event_id, mutate }) {
 
             return;
          }
-         console.log("555555")
-         // mutate(); // Update cache
-
+   
          toast({
             variant: "success",
             title: "Kuva",

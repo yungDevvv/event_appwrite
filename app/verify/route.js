@@ -20,7 +20,7 @@ export async function GET(request) {
 
     try {
         const { database } = await createAdminClient();
-        console.log(invintation_id, "2INVITE ID")
+
         event = await database.getDocument(
             'main_db',
             'events',

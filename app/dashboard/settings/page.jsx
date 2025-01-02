@@ -8,14 +8,13 @@ import { getLoggedInUser } from "@/lib/appwrite/server/appwrite";
 
 export default async function Page() {
    const user = await getLoggedInUser();
-   console.log(user.clientData)
    return (
       <div>
          <section className="mb-6 mt-2">
             <SettingsLogoForm
                user={user}
                recordExists={user.hasOwnProperty("clientData")}
-               logo={user.hasOwnProperty("clientData") && user.clientData.logo ? user.clientData.logo : null}
+               logo={user.hasOwnProperty("clientData") && user.clientData?.logo ? user.clientData.logo : null}
             />
          </section>
          <hr></hr>
@@ -23,8 +22,8 @@ export default async function Page() {
             <SettingsDescriptionForm
                user={user}
                recordExists={user.hasOwnProperty("clientData")}
-               fi_welcome_text={user.hasOwnProperty("clientData") && user.clientData.fi_welcome_text ? user.clientData.fi_welcome_text : null}
-            en_welcome_text={user.hasOwnProperty("clientData") && user.clientData.en_welcome_text ? user.clientData.en_welcome_text : null}
+               fi_welcome_text={user.hasOwnProperty("clientData") && user.clientData?.fi_welcome_text ? user.clientData.fi_welcome_text : null}
+            en_welcome_text={user.hasOwnProperty("clientData") && user.clientData?.en_welcome_text ? user.clientData.en_welcome_text : null}
             />
          </section>
          <hr></hr>
@@ -32,8 +31,8 @@ export default async function Page() {
             <SettingsOtherForm
                user={user}
                recordExists={user.hasOwnProperty("clientData")}
-               fi_sub_description={user.hasOwnProperty("clientData") && user.clientData.fi_sub_description ? user.clientData.fi_sub_description : null}
-               en_sub_description={user.hasOwnProperty("clientData") && user.clientData.en_sub_description ? user.clientData.en_sub_description : null}
+               fi_sub_description={user.hasOwnProperty("clientData") && user.clientData?.fi_sub_description ? user.clientData.fi_sub_description : null}
+               en_sub_description={user.hasOwnProperty("clientData") && user.clientData?.en_sub_description ? user.clientData.en_sub_description : null}
             />
          </section>
          <hr></hr>
@@ -41,7 +40,7 @@ export default async function Page() {
             <SettingsGoogleForm
                user={user}
                recordExists={user.hasOwnProperty("clientData")}
-               google_link={user.hasOwnProperty("clientData") && user.clientData.google_link ? user.clientData.google_link : null}
+               google_link={user.hasOwnProperty("clientData") && user.clientData?.google_link ? user.clientData.google_link : null}
             />
          </section>
          <hr></hr>
@@ -49,14 +48,14 @@ export default async function Page() {
             <SettingsPrivacyForm
                user={user}
                recordExists={user.hasOwnProperty("clientData")}
-               privacy={user.hasOwnProperty("clientData") && user.clientData.privacy ? JSON.parse(user.clientData.privacy) : null}
+               privacy={user.hasOwnProperty("clientData") && user.clientData?.privacy ? JSON.parse(user.clientData.privacy) : null}
             />
          </section>
          <section className="my-6">
             <OrderConfirmationForm
                user={user}
                recordExists={user.hasOwnProperty("clientData")}
-               order_confirmation={user.hasOwnProperty("clientData") && user.clientData.order_confirmation ? JSON.parse(user.clientData.order_confirmation) : null}
+               order_confirmation={user.hasOwnProperty("clientData") && user.clientData?.order_confirmation ? JSON.parse(user.clientData.order_confirmation) : null}
             />
          </section>
 

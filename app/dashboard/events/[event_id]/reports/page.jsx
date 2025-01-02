@@ -49,8 +49,6 @@ export default function Page() {
          return;
       }
 
-      console.log(data);
-
       const reportedPosts = data.event_posts.map(item => {
          return {
             ...item,
@@ -173,7 +171,7 @@ const ReportedPost = ({ post, toggleFullScreen, router, toast, mutateParent }) =
 
       getMimeTypeFromUrl(storage.getFileView("event_images", post.image_url));
    }, [post]);
-   { console.log(post, "PSOT PASDASDASDASD") }
+  
    return (
       <Fragment>
          <div className="w-full flex max-sm:flex-col sm:flex-row my-5">

@@ -11,7 +11,7 @@ import { storage } from '@/lib/appwrite/client/appwrite';
 
 const SettingsLogoForm = ({ recordExists, user, logo }) => {
    const [selectedFile, setSelectedFile] = useState(null);
-   console.log(user.$id)
+
    const { toast } = useToast();
 
    const router = useRouter();
@@ -108,8 +108,8 @@ const SettingsLogoForm = ({ recordExists, user, logo }) => {
                setSelectedFile(null);
             }} size={18} className="absolute -top-2 -right-2 cursor-pointer" />}
             {selectedFile?.preview && <img src={selectedFile.preview} alt="company_logo1" />}
-            {console.log(user.clientData?.logo)}
-            {selectedFile === null && <img src={storage.getFilePreview("logos", user.clientData.logo)} alt="company_logo" />}
+   
+            {selectedFile === null && user.clientData?.logo && <img src={storage.getFilePreview("logos", user.clientData.logo)} alt="company_logo" />}
          </div>
       </div>
    );

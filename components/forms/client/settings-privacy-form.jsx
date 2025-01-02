@@ -212,7 +212,7 @@ const SettingsPrivacyForm = ({ recordExists, user, privacy }) => {
    return (
       <div className='w-full'>
          <div className='w-full'>
-            <h1 className='font-semibold' onClick={() => console.log(pdfUrl)}>Tietosuojaseloste</h1>
+            <h1 className='font-semibold'>Tietosuojaseloste</h1>
             <p className='text-zinc-600 leading-tight'>Tietosuojaseloste näkyy tapahtumasivun etusivulla, voit antaa linkin olemassa olevaan sivuun tai ladata erillisen PDF- tiedoston.</p>
          </div>
          <div className="w-full mt-5">
@@ -278,7 +278,7 @@ const SettingsPrivacyForm = ({ recordExists, user, privacy }) => {
                            </div>
 
                         )}
-                        {console.log(privacy)}
+                        
                         {privacy !== null && !pdfUrl && privacy?.pdf_privacy && (
                            <Button variant="link" type="button" asChild>
                               <Link className='flex items-center !p-0 !h-7' target="_blank" rel="noopener noreferrer" href={storage.getFileView("privacy_statement", privacy.pdf_privacy)}><Eye className="mr-1 w-5 h-5" /> Näytä tietosuojaseloste</Link>

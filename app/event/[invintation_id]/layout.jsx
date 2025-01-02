@@ -8,7 +8,6 @@ import Link from "next/link";
 
 async function EventLayout({ children, params }) {
    const { invintation_id } = await params;
-   console.log(invintation_id,)
    const messages = await getMessages();
 
    const user = await getLoggedInUser();

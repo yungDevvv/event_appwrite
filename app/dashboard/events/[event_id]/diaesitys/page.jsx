@@ -22,7 +22,7 @@ export default function Page() {
    const { data: event, mutate, isLoading } = useSWR(event_id, async () => {
   
       const { data, error } = await getDocument("main_db", "events", event_id);
-      console.log(data)
+  
       if (error) {
          alert(error);
          console.log(error);
@@ -111,7 +111,6 @@ export default function Page() {
    }, [])
    return (
       <div className="w-full h-full min-h-screen">
-         { console.log(event)}
          <h1 className="font-semibold text-2xl">{event && event.event_name}</h1>
          <p className="text-base mt-1 mb-3 text-zinc-600">Jätä vain ne kuvat, jotka haluat näyttää diaesityksessa</p>
          {isLoading ? (

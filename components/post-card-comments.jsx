@@ -54,7 +54,7 @@ export default function PostCardComments({ user, post }) {
       router.refresh();
       setText("");
    }
-   console.log(post)
+  
    return (
       <div className='text-black'>
          <Drawer>

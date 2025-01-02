@@ -33,8 +33,6 @@ export default function Page() {
 
     const { data, error } = await signInAdminDashboard(formData.email, formData.password);
 
-    console.log(data, error)
-
     if (error?.message === "Invalid credentials. Please check the email and password.") {
       setIsLoading(false);
       setErrorMessage("Virheelliset kirjautumistiedot. Tarkista sähköposti ja salasana.");

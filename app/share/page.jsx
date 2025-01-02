@@ -17,26 +17,6 @@ const getMimeTypeFromUrl = async (url) => {
    }
 };
 
-export async function generateMetadata({ params, searchParams }, parent) {
-   ;
-   const { data, error } = await supabase.from("events").select("event_name").eq("id", searchParams["event_id"]).single();
-
-   if (error) {
-      console.log(error);
-      return;
-   }
-   if (data) {
-      return {
-         title: 'Pois Tieltä Oy',
-         description: data.event_name,
-         openGraph: {
-            images: [{url: searchParams["image_url"]}],
-         },
-      }
-   } else {
-      console.log("NO DATA FROM SUPABASE")
-   }
-}
 export default async function Page({ searchParams }) {
    if (!searchParams && !searchParams["image_url"]) {
       return (
