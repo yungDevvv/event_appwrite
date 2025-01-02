@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Camera, Loader2, X } from "lucide-react";
 import {
@@ -22,6 +22,7 @@ export default function UploadImage({ user_id, event_id, mutate }) {
    const [image, setImage] = useState(null);
    const [loading, setLoading] = useState(false);
    const [previewUrl, setPreviewUrl] = useState(null);
+   const [fileType, setFileType] = useState(null);
    const t = useTranslations();
    const router = useRouter();
    const { toast } = useToast();
@@ -30,17 +31,27 @@ export default function UploadImage({ user_id, event_id, mutate }) {
       const selectedFile = e.target.files[0];
 
       if (selectedFile) {
-         const maxSizeInBytes = 50 * 1024 * 1024; // 100 MB
+         const maxSizeInBytes = 50 * 1024 * 1024; // 50 MB
+         const fileType = selectedFile.type.split('/')[0]; // получаем 'image' или 'video'
 
          if (selectedFile.size > maxSizeInBytes) {
             toast({
                variant: "destructive",
-               title: "Virhe: Kuvan koko ei saa olla suurempi kuin 100 MB!",
+               title: "Virhe: Kuvan koko ei saa olla suurempi kuin 50 MB!",
+            });
+            return;
+         }
+
+         if (fileType !== 'image' && fileType !== 'video') {
+            toast({
+               variant: "destructive",
+               title: "Virhe: Vain kuvat ja videot ovat sallittuja!",
             });
             return;
          }
 
          setImage(selectedFile);
+         setFileType(fileType);
          setPreviewUrl(URL.createObjectURL(selectedFile));
       }
    };
@@ -91,9 +102,11 @@ export default function UploadImage({ user_id, event_id, mutate }) {
          setLoading(false);
          setImage(null);
          setPreviewUrl(null);
+         setFileType(null);
       }
    };
 
+    
    return (
       <>
          <Button variant="outline" size={"icon"} className="cursor-pointer" asChild>
@@ -112,6 +125,7 @@ export default function UploadImage({ user_id, event_id, mutate }) {
                   <button onClick={() => {
                      setImage(null);
                      setPreviewUrl(null);
+                     setFileType(null);
                   }}
                      variant="outline"
                      className=" !p-0 !m-0"
@@ -120,7 +134,23 @@ export default function UploadImage({ user_id, event_id, mutate }) {
                   </button>
                </AlertDialogHeader>
                <div className="my-1 w-full h-full max-h-[450px] aspect-[3/4]">
-                  {previewUrl && <img src={previewUrl} className="rounded-xl w-full h-full object-contain" />}
+               {fileType === "video" && (
+                  <video 
+                     autoPlay 
+                     muted 
+                     loop 
+                     controls 
+                     className="rounded-xl w-full h-full object-cover" 
+                     src={previewUrl} 
+                  />
+               )}
+               {fileType === "image" && (
+                  <img 
+                     className="rounded-xl w-full h-full object-cover" 
+                     src={previewUrl} 
+                  />
+               )}
+                  {/* {previewUrl && <img src={previewUrl} className="rounded-xl w-full h-full object-contain" />} */}
                </div>
                <AlertDialogFooter>
                   <AlertDialogAction variant={"outline"} className="text-md" onClick={() => uploadImage()}>
@@ -132,4 +162,3 @@ export default function UploadImage({ user_id, event_id, mutate }) {
       </>
    )
 }
-
