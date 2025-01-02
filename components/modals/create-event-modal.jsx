@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod";
 import { useForm } from 'react-hook-form';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import MultipleSelectWithCheckbox from "../ui/MultipleSelectWithCheckbox";
 import { useModal } from '@/hooks/use-modal';
 import { Eye, Loader2, X } from 'lucide-react';
@@ -28,6 +28,7 @@ import { Separator } from "@/components/ui/separator";
 
 import dynamic from 'next/dynamic';
 import { createDocument, createFile, getLoggedInUser, updateDocument } from '@/lib/appwrite/server/appwrite';
+import { storage } from '@/lib/appwrite/client/appwrite';
 const CKeditor = dynamic(() => import('@/components/ck-editor'), {
    ssr: false,
    loading: () => <div className='w-full min-h-[190px] flex justify-center items-center py-10'><Loader2 className='animate-spin text-clientprimary' /></div>
@@ -70,6 +71,7 @@ const CreateEventModal = () => {
    const router = useRouter();
    const { toast } = useToast();
    const { isOpen, onClose, type, data } = useModal();
+   const formRef = useRef(null);
 
    const [eventImage, setEventImage] = useState(null);
    const [eventDescriptionText, setEventDescriptionText] = useState(data?.event?.fi_event_description ? data.event.fi_event_description : "");
@@ -386,10 +388,17 @@ const CreateEventModal = () => {
                      : "Luo uusi tapahtuma"
                   }
                </DialogTitle>
+               <Button
+                  onClick={onClose}
+                  variant="ghost"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 hover:bg-zinc-100 rounded-md p-2 h-auto"
+               >
+                  <X className="h-5 w-5" />
+               </Button>
             </DialogHeader>
             <DialogDescription></DialogDescription>
             <Form {...form} onSubmit={form.handleSubmit(onSubmit)}>
-               <form onSubmit={form.handleSubmit(onSubmit)} className="px-6 space-y-4 overflow-y-auto flex-1 pb-5">
+               <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="px-6 space-y-4 overflow-y-auto flex-1 pb-5">
                   <div className="flex max-sm:block max-sm:space-y-3">
 
                      {/* Client Name */}
@@ -561,7 +570,7 @@ const CreateEventModal = () => {
                               )}
                            >
                            </FormField>
-                           <span className='px-1'> : </span>
+                           <span className="px-1"> : </span>
                            <FormField
                               control={form.control}
                               name="eventTimeMinutes"
@@ -737,7 +746,7 @@ const CreateEventModal = () => {
 
                               {data && data.event?.instructions_file && form.getValues("instructionsFile") === null && (
                                  <Button variant="link" type="button" asChild>
-                                    <Link className='flex items-center !p-0 !h-7' target="_blank" rel="noopener noreferrer" href={"https://supa.crossmedia.fi/storage/v1/object/public/" + data.event.instructions_file}><Eye className="mr-1 w-5 h-5" /> Näytä ohjeistus</Link>
+                                    <Link className='flex items-center !p-0 !h-7' target="_blank" rel="noopener noreferrer" href={storage.getFileView("instructions_files", data.event.instructions_file)}><Eye className="mr-1 w-5 h-5" /> Näytä ohjeistus</Link>
                                  </Button>
                               )}
                            </FormItem>
@@ -767,7 +776,7 @@ const CreateEventModal = () => {
 
                               {data && data.event?.event_image && !eventImage && (
                                  <Button variant="link" type="button" asChild>
-                                    <Link className='flex items-center !p-0 !h-7' target="_blank" rel="noopener noreferrer" href={"https://supa.crossmedia.fi/storage/v1/object/public/" + data.event.event_image}><Eye className="mr-1 w-5 h-5" /> Näytä kuva</Link>
+                                    <Link className='flex items-center !p-0 !h-7' target="_blank" rel="noopener noreferrer" href={storage.getFilePreview("event_image", data.event.event_image)}><Eye className="mr-1 w-5 h-5" /> Näytä kuva</Link>
                                  </Button>
                               )}
 
@@ -791,8 +800,24 @@ const CreateEventModal = () => {
                   </div>
                </form>
                <DialogFooter className="pb-3 sticky bottom-0 bg-white border-t p-4 ">
-                  {data?.duplicate && <Button className="bg-clientprimary hover:bg-clientprimaryhover text-base" type="submit" disabled={isLoading}>{isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "Tallenna"}</Button>}
-                  {!data?.duplicate && <Button className="bg-clientprimary hover:bg-clientprimaryhover text-base" type="submit" disabled={isLoading}>{isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : data.edit ? "Tallenna" : "Tallenna"}</Button>}
+                  {data?.duplicate && (
+                     <Button 
+                        className="bg-clientprimary hover:bg-clientprimaryhover text-base" 
+                        onClick={() => formRef.current?.requestSubmit()}
+                        disabled={isLoading}
+                     >
+                        {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "Tallenna"}
+                     </Button>
+                  )}
+                  {!data?.duplicate && (
+                     <Button 
+                        className="bg-clientprimary hover:bg-clientprimaryhover text-base" 
+                        onClick={() => formRef.current?.requestSubmit()}
+                        disabled={isLoading}
+                     >
+                        {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : data.edit ? "Tallenna" : "Tallenna"}
+                     </Button>
+                  )}
                </DialogFooter>
             </Form>
          </DialogContent>

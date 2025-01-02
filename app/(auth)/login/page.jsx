@@ -63,7 +63,6 @@ export default function Page() {
               <Input
                 id="email"
                 type="email"
-                placeholder="m@example.com"
                 {...register("email", { required: "Sähköposti on pakollinen" })}
               />
               {errors.email && <p className="text-red-500 text-sm -mt-1">{errors.email.message}</p>}

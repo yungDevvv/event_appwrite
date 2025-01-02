@@ -26,7 +26,7 @@ export default function Page() {
    const { tab, setTab } = useTabs();
    // const { posts, isLoading, setSize, isReachingEnd, isValidating, mutate } = useInfinitePosts(2, eventData.id);
 
-   const [favoritesList, setFavoritesList] = useState(userData?.favorite_images ? userData?.favorite_images : []);
+   const [favoritesList, setFavoritesList] = useState(userData?.favorited_images ? userData?.favorited_images : []);
    const [isAnimating, setIsAnimating] = useState(false);
 
    useEffect(() => {
@@ -35,7 +35,7 @@ export default function Page() {
       (async () => {
          if (favoritesList.length !== 0) {
             const { error } = await updateDocument("main_db", "users", userData.$id, {
-               favorite_images: favoritesList
+               favorited_images: favoritesList
             })
 
             if (error) return;
@@ -51,10 +51,13 @@ export default function Page() {
             if (favoritesList.length !== 0) {
 
                const { error } = await updateDocument("main_db", "users", userData.$id, {
-                  favorite_images: favoritesList.filter(id => id !== post.$id)
+                  favorited_images: favoritesList.filter(id => id !== post.$id)
                })
 
-               if (error) return;
+               if (error) {
+                  console.log(error);
+                  return;
+               };
             }
          })()
       } else {
@@ -63,9 +66,11 @@ export default function Page() {
             if (favoritesList.length !== 0) {
 
                const { error } = await updateDocument("main_db", "users", userData.$id, {
-                  favorite_images: [post.$id, ...favoritesList]
+                  favorited_images: [post.$id, ...favoritesList]
                })
-               if (error) return;
+               if (error) {
+                  console.log(error);
+               };
             }
          })()
 

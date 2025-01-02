@@ -20,7 +20,7 @@ import { useTranslations } from 'next-intl';
 import LanguageSwitcher from '@/components/language-switcher';
 import { useLocale } from "next-intl";
 import { useEventContext } from "@/context/EventContext";
-import { ArrowLeftFromLine, Calendar, Info, MapPin, Smile } from 'lucide-react';
+import { ArrowLeftFromLine, Calendar, FileText, Info, MapPin, Smile } from 'lucide-react';
 import { storage } from "@/lib/appwrite/client/appwrite";
 import { signOut } from "@/lib/appwrite/server/appwrite";
 
@@ -122,6 +122,7 @@ export default function Page({ params }) {
 
                   <div className="bg-[#0a0a0a] rounded-xl p-6 space-y-6 border border-zinc-900">
                      <div className="grid gap-4">
+
                         <div className="flex items-center space-x-4">
                            <span className="text-lg"><Calendar className="text-[#FF8F00]" /></span>
                            {eventData?.event_time && (
@@ -130,9 +131,7 @@ export default function Page({ params }) {
                         </div>
 
                         <div className="flex items-center space-x-4">
-
                            <span className="text-lg"><MapPin className="text-[#FF8F00]" /></span>
-
                            <div>
                               {eventData?.event_address && <span>{eventData?.event_address}, </span>}
                               {eventData?.event_place && <span className="capitalize">{eventData?.event_place}</span>}
@@ -141,14 +140,14 @@ export default function Page({ params }) {
 
                         {eventData?.instructions_file && (
                            <div className="flex items-center space-x-4">
-                              <div className="w-8 h-8 rounded-full bg-[#FF8F00] flex items-center justify-center">
-                                 <span className="text-lg">📄</span>
-                              </div>
+                              <span className="text-lg">
+                                 <FileText className="text-[#FF8F00]" />
+                              </span>
                               <Link
                                  target="_blank"
                                  rel="noopener noreferrer"
-                                 className='text-white hover:text-[#FF8F00] transition-colors'
-                                 href={`https://supa.crossmedia.fi/storage/v1/object/public/${eventData?.instructions_file}`}
+                                 className='text-white hover:text-[#FF8F00] transition-colors underline underline-offset-4' 
+                                 href={storage.getFileView("instructions_files", eventData?.instructions_file)}
                               >
                                  {t("v9")}
                               </Link>
@@ -178,11 +177,11 @@ export default function Page({ params }) {
                      </div>
 
                      <div className="prose prose-invert max-w-none">
-                        {eventClientData && (
+                        {eventData.users?.clientData && (
                            locale === "fi" ? (
-                              <div dangerouslySetInnerHTML={{ __html: eventClientData.fi_sub_description }} />
+                              <div dangerouslySetInnerHTML={{ __html: eventData.users?.clientData.fi_sub_description }} />
                            ) : (
-                              <div dangerouslySetInnerHTML={{ __html: eventClientData.en_sub_description }} />
+                              <div dangerouslySetInnerHTML={{ __html: eventData.users?.clientData.en_sub_description }} />
                            )
                         )}
                      </div>
