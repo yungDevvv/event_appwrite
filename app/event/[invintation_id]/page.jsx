@@ -53,7 +53,7 @@ export default function Page({ params }) {
                </Button>
             </div>
          </nav>
-         <div className="pb-12">
+         <div className="pb-20">
             <div className="relative h-[30vh] flex items-center justify-center" >
                <img
                   src="https://crossmedia.fi/holvi/poistielta/img/banner-monkija.jpg"

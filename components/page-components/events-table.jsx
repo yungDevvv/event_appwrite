@@ -163,9 +163,9 @@ const EventsTable = ({ user }) => {
                                  <MenubarMenu>
                                     <MenubarTrigger onClick={() => setTab(event.$id)} asChild>
                                        <Button className="hover:bg-zinc-200 p-1 rounded-md relative cursor-pointer" variant="icon">
-                                          {event.event_posts_reports?.length !== 0 && openDropdownId !== event.$id && (
+                                          {event.event_posts.filter(post => post.is_reported === true && post.report_status === "waiting")?.length !== 0 && openDropdownId !== event.$id && (
                                              <div className="bg-red-500 text-white rounded-full absolute w-4 h-4 flex items-center justify-center -top-1 -right-1" title="Ilmiannetut julkaisut">
-                                                {event.event_posts_reports?.length}
+                                                {event.event_posts.filter(post => post.is_reported === true && post.report_status === "waiting")?.length}
                                              </div>
                                           )}
                                           <EllipsisVertical />
@@ -214,7 +214,7 @@ const EventsTable = ({ user }) => {
                                        </MenubarItem>
                                        <MenubarItem className="text-sm" asChild>
                                           <Link className="flex" href={"/dashboard/events/" + event.invintation_id + "/qr"}>
-                                             <QrCode size={18} className="mr-2" /> 
+                                             <QrCode size={18} className="mr-2" />
                                              <span>QR-koodi</span>
                                           </Link>
                                        </MenubarItem>
@@ -235,9 +235,9 @@ const EventsTable = ({ user }) => {
                                           <Link className="flex" href={"/dashboard/events/" + event.$id + "/reports"}>
                                              <ShieldAlert size={18} className="mr-2" />
                                              <span>Ilmiannetut julkaisut</span>
-                                             {event.event_posts_reports?.length !== 0 && (
+                                             {event.event_posts.filter(post => post.is_reported === true && post.report_status === "waiting")?.length !== 0 && (
                                                 <div className="bg-red-500 text-white rounded-full absolute w-4 h-4 flex items-center justify-center -top-1 -right-1" title="Ilmiannetut julkaisut">
-                                                   {event.event_posts_reports?.length}
+                                                   {event.event_posts.filter(post => post.is_reported === true && post.report_status === "waiting")?.length}
                                                 </div>
                                              )}
                                           </Link>

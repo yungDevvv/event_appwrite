@@ -35,9 +35,9 @@ export default function Page() {
 
     console.log(data, error)
 
-    if (error) {
+    if (error?.message === "Invalid credentials. Please check the email and password.") {
       setIsLoading(false);
-      setErrorMessage(error.message);
+      setErrorMessage("Virheelliset kirjautumistiedot. Tarkista sähköposti ja salasana.");
       return;
     }
 

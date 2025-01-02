@@ -89,7 +89,7 @@ export default function Page() {
    //    return () => window.removeEventListener('scroll', handleScroll);
    // }, [isReachingEnd, isValidating, setSize]);
 
-   const filteredList = eventData?.event_posts?.filter(post => {
+   const filteredList = eventData?.event_posts?.filter(post => post.is_accepted === true).filter(post => {
       if (tab === "favorites") return favoritesList.includes(post.$id);
       if (tab === "my") return post.users.$id === userData.$id;
       return true; // all posts

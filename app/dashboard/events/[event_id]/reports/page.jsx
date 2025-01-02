@@ -56,7 +56,7 @@ export default function Page() {
             ...item,
             reports: data.event_posts_reports.filter(post => post.event_posts.$id === item.$id)
          }
-      });
+      }).filter(post => post.is_reported === true);
       return { event: data, reportedPosts };
    });
 
@@ -70,11 +70,11 @@ export default function Page() {
    return (
       <div className="w-full h-full">
          <h1 className="font-semibold text-2xl">{data?.event && data.event.event_name}</h1>
-         <div className="space-x-4 mt-5">
-            <Button className={cn("bg-clientprimary hover:bg-clientprimaryhover opacity-90", filter === "waiting" && "bg-clientprimaryhover opacity-1")} onClick={() => setFilter("waiting")}>Odottaa tarkistusta</Button>
-            <Button className={cn("bg-clientprimary hover:bg-clientprimaryhover opacity-90", filter === "deleted" && "bg-clientprimaryhover opacity-1")} onClick={() => setFilter("deleted")}>Poistetut</Button>
-            <Button className={cn("bg-clientprimary hover:bg-clientprimaryhover opacity-90", filter === "approved" && "bg-clientprimaryhover opacity-1")} onClick={() => setFilter("approved")}>Hyväksytyt</Button>
-            <Button className={cn("bg-clientprimary hover:bg-clientprimaryhover opacity-90", filter === "all" && "bg-clientprimaryhover opacity-1")} onClick={() => setFilter("all")}>Kaikki</Button>
+         <div className="flex flex-wrap gap-2 mt-5 max-sm:space-x-0 sm:space-x-4">
+            <Button className={cn("bg-clientprimary hover:bg-clientprimaryhover opacity-90 max-sm:w-full", filter === "waiting" && "bg-clientprimaryhover opacity-1")} onClick={() => setFilter("waiting")}>Odottaa tarkistusta</Button>
+            <Button className={cn("bg-clientprimary hover:bg-clientprimaryhover opacity-90 max-sm:w-full", filter === "deleted" && "bg-clientprimaryhover opacity-1")} onClick={() => setFilter("deleted")}>Poistetut</Button>
+            <Button className={cn("bg-clientprimary hover:bg-clientprimaryhover opacity-90 max-sm:w-full", filter === "approved" && "bg-clientprimaryhover opacity-1")} onClick={() => setFilter("approved")}>Hyväksytyt</Button>
+            <Button className={cn("bg-clientprimary hover:bg-clientprimaryhover opacity-90 max-sm:w-full", filter === "all" && "bg-clientprimaryhover opacity-1")} onClick={() => setFilter("all")}>Kaikki</Button>
          </div>
          {isFullScreen && (
             <div
@@ -176,15 +176,28 @@ const ReportedPost = ({ post, toggleFullScreen, router, toast, mutateParent }) =
    { console.log(post, "PSOT PASDASDASDASD") }
    return (
       <Fragment>
-         <div className="w-full flex my-5">
-
-            <div className="max-w-[200px] max-h-[200px] my-3 relative">
-               <Search size={30} onClick={() => toggleFullScreen(storage.getFileView("event_images", post.image_url), fileType)} className="absolute top-3 right-3 text-clientprimary cursor-pointer" />
-               {fileType === "video" && <video autoPlay muted loop controls className="rounded-xl w-full h-full object-cover" src={storage.getFileView("event_images", post.image_url)} />}
-               {fileType === "image" && <img className=" rounded-xl w-full h-full object-cover" src={storage.getFileView("event_images", post.image_url)} />}
+         <div className="w-full flex max-sm:flex-col sm:flex-row my-5">
+            <div className="max-sm:w-full sm:max-w-[200px] max-h-[200px] my-3 relative">
+               <Search size={30} onClick={() => toggleFullScreen(storage.getFileView("event_images", post.image_url), fileType)} className="absolute top-3 right-3 text-clientprimary cursor-pointer z-10" />
+               {fileType === "video" && (
+                  <video 
+                     autoPlay 
+                     muted 
+                     loop 
+                     controls 
+                     className="rounded-xl w-full h-full object-cover" 
+                     src={storage.getFileView("event_images", post.image_url)} 
+                  />
+               )}
+               {fileType === "image" && (
+                  <img 
+                     className="rounded-xl w-full h-full object-cover" 
+                     src={storage.getFileView("event_images", post.image_url)} 
+                  />
+               )}
             </div>
 
-            <div className="my-auto ml-10">
+            <div className="max-sm:my-3 sm:my-auto sm:ml-10 flex-grow">
                <div className="mb-5">
                   {post.report_status === "deleted" && <Badge variant="destructive">Piilotettu</Badge>}
                   {post.report_status === "waiting" && <Badge className="bg-blue-500 hover:bg-blue-500">Odottaa tarkistusta</Badge>}
@@ -194,19 +207,17 @@ const ReportedPost = ({ post, toggleFullScreen, router, toast, mutateParent }) =
                <p className="mt-1 text-sm">{post.users.first_name} {post.users.last_name}</p>
                <h3 className="-mt-1 text-sm">{post.users.email}</h3>
 
-               <hr className="my-2" />
                <Dialog>
-                  <DialogTrigger>Katso raportit</DialogTrigger>
-                  <DialogContent>
+                  <DialogTrigger className="text-sm hover:underline cursor-pointer mt-5">Katso raportit</DialogTrigger>
+                  <DialogContent className="max-w-[90vw] sm:max-w-lg">
                      <DialogHeader>
                         <DialogTitle>Kaikki kuvan raportit</DialogTitle>
-                        <DialogDescription>
-                        </DialogDescription>
-                        <div>
+                        <DialogDescription></DialogDescription>
+                        <div className="max-h-[60vh] overflow-y-auto">
                            {post && post.reports.length !== 0 && post.reports.map((reason) => {
                               return (
                                  <div key={reason.$createdAt} className='my-2'>
-                                    <div className='flex items-center justify-between'>
+                                    <div className='flex items-center justify-between flex-wrap gap-2'>
                                        <p className='font-semibold'>{reason.users.first_name} {reason.users.last_name}</p>
                                        <p className='text-zinc-400'>{format(new Date(reason.$createdAt), 'HH:mm')}</p>
                                     </div>
@@ -219,17 +230,26 @@ const ReportedPost = ({ post, toggleFullScreen, router, toast, mutateParent }) =
                   </DialogContent>
                </Dialog>
             </div>
-            <div className="my-auto ml-auto">
+
+            <div className="max-sm:mt-5 sm:my-auto sm:ml-auto flex flex-col gap-2">
                {post.report_status === "deleted" && (
-                  <Button className="bg-clientprimary hover:bg-clientprimaryhover" onClick={() => approveImage()}>Jatka julkaisua</Button>
+                  <Button className="bg-clientprimary hover:bg-clientprimaryhover max-sm:w-full" onClick={() => approveImage()}>
+                     Jatka julkaisua
+                  </Button>
                )}
                {post.report_status === "approved" && (
-                  <Button className="bg-red-600 hover:bg-red-700 block" onClick={() => deleteImageFromView()}>Piilota julkaisu</Button>
+                  <Button className="bg-red-600 hover:bg-red-700 max-sm:w-full" onClick={() => deleteImageFromView()}>
+                     Piilota julkaisu
+                  </Button>
                )}
                {post.report_status === "waiting" && (
                   <Fragment>
-                     <Button className="bg-green-600 hover:bg-green-700 block mb-3" onClick={() => approveImage()}>Jatka julkaisua</Button>
-                     <Button className="bg-red-600 hover:bg-red-700 block" onClick={() => deleteImageFromView()}>Piilota julkaisu</Button>
+                     <Button className="bg-green-600 hover:bg-green-700 max-sm:w-full" onClick={() => approveImage()}>
+                        Jatka julkaisua
+                     </Button>
+                     <Button className="bg-red-600 hover:bg-red-700 max-sm:w-full" onClick={() => deleteImageFromView()}>
+                        Piilota julkaisu
+                     </Button>
                   </Fragment>
                )}
             </div>

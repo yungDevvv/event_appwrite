@@ -108,7 +108,6 @@ export async function GET(request) {
 
         const response = NextResponse.redirect(new URL(process.env.NEXT_PUBLIC_URL));
 
-     
         response.cookies.set({
             name: 'session_id',
             value: session.secret,

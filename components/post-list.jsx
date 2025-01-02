@@ -974,7 +974,7 @@ export const PostList = ({ posts, favoritesList, user, addToFavorites }) => {
 }
 
 function PostCard({ toast, deletePost, user, post, addToFavorites, isFavorite }) {
-   const {invintation_id} = useParams();
+   const { invintation_id } = useParams();
    const [fileType, setFileType] = useState(null);
    const [isFullScreen, setIsFullScreen] = useState(false);
    const [reportModalPostId, setReportModalPostId] = useState(null);
@@ -1152,8 +1152,8 @@ function PostCard({ toast, deletePost, user, post, addToFavorites, isFavorite })
             </DropdownMenu>
          </div>
          <div className="max-w-[360px] w-full h-full max-h-[480px] my-3 aspect-[3/4]">
-            {fileType === "video" && <video autoPlay muted loop controls className="rounded-xl w-full h-full object-contain" src={storage.getFileView("event_images", post.image_url)} />}
-            {fileType === "image" && <img onClick={toggleFullScreen} className="cursor-pointer rounded-xl w-full h-full object-contain" src={storage.getFileView("event_images", post.image_url)} />}
+            {fileType === "video" && <video autoPlay muted loop controls className="rounded-xl w-full h-full object-contain" src={storage.getFilePreview("event_images", post.image_url)} />}
+            {fileType === "image" && <img onClick={toggleFullScreen} className="cursor-pointer rounded-xl w-full h-full object-contain" src={storage.getFilePreview("event_images", post.image_url)} />}
          </div>
 
          <div className="w-full flex mt-2">
