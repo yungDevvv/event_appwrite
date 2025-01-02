@@ -129,7 +129,7 @@ export default function RegisterForEventForm({ logo, title, invintation_id }) {
             <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                <SVGComponent
                   className="w-40 text-center"
-                  url={storage.getFileView("logos", user.clientData.logo)}
+                  url={storage.getFileView("logos", logo)}
                />
             </div>
          )}
