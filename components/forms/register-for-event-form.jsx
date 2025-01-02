@@ -17,6 +17,7 @@ import { Fragment, useState } from "react";
 
 import { signInWithEmail } from "@/lib/appwrite/server/appwrite";
 import { storage } from "@/lib/appwrite/client/appwrite";
+import SVGComponent from "../svg-image";
 
 export default function RegisterForEventForm({ logo, title, invintation_id }) {
 
@@ -126,7 +127,10 @@ export default function RegisterForEventForm({ logo, title, invintation_id }) {
       <Card className="mx-auto w-full max-w-md relative">
          {logo && (
             <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-               <img className='w-40 text-center' src={storage.getFileView("logos", logo)} />
+               <SVGComponent
+                  className="w-40 text-center"
+                  url={storage.getFileView("logos", user.clientData.logo)}
+               />
             </div>
          )}
          <CardHeader>

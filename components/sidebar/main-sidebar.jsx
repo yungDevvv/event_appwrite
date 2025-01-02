@@ -11,13 +11,17 @@ import {
 import ClientSidebarContent from "./roles/client-sidebar-content"
 import AdminSidebarContent from "./roles/admin-sidebar-content"
 import { storage } from "@/lib/appwrite/client/appwrite"
+import SVGComponent from "../svg-image"
 
 export function MainSidebar({ user }) {
   return (
     <Sidebar className="bg-accent/60 ">
       <SidebarHeader className="justify-center">
         {user?.clientData && user.clientData?.logo
-          ? <img className="max-h-[100px] h-full" src={storage.getFileView("logos", user.clientData.logo)} />
+          ? <SVGComponent
+            className="max-h-[100px] min-h-[50px] h-full"
+            url={storage.getFileView("logos", user.clientData.logo)}
+          />
           : <span className="text-lg text-orange-500 font-bold">Company Logo</span>
         }
       </SidebarHeader>

@@ -23,8 +23,10 @@ const SettingsGoogleForm = ({ recordExists, user, google_link }) => {
    const handleSubmit = async () => {
       if (recordExists === false) {
          const { error } = await createDocument("main_db", "client_data", {
-            users: user.$id,
-            google_link: inputValue
+            body: {
+               users: user.$id,
+               google_link: inputValue
+            }
          })
 
          if (error) {

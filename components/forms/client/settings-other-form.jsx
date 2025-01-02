@@ -31,11 +31,13 @@ const SettingsOtherForm = ({ recordExists, user, fi_sub_description, en_sub_desc
 	};
 
 	const handleSave = async () => {
-		if (recordExists === false) { 
+		if (recordExists === false) {
 			const { error } = await createDocument("main_db", "client_data", {
-				users: user.$id,
-				fi_sub_description: fiContent,
-				en_sub_description: enContent
+				body: {
+					users: user.$id,
+					fi_sub_description: fiContent,
+					en_sub_description: enContent
+				}
 			})
 
 			if (error) {

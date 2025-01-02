@@ -8,8 +8,10 @@ import { useRouter } from 'next/navigation';
 import { X } from 'lucide-react';
 import { createDocument, createFile, updateDocument } from '@/lib/appwrite/server/appwrite';
 import { storage } from '@/lib/appwrite/client/appwrite';
+import { ImageFormat } from 'appwrite';
+import SVGComponent from '@/components/svg-image';
 
-const SettingsLogoForm = ({ recordExists, user, logo }) => {
+const SettingsLogoForm = ({ recordExists, user }) => {
    const [selectedFile, setSelectedFile] = useState(null);
 
    const { toast } = useToast();
@@ -49,8 +51,10 @@ const SettingsLogoForm = ({ recordExists, user, logo }) => {
       } else {
 
          const { error } = await createDocument("main_db", "client_data", {
-            users: user.$id,
-            logo: fileId
+            body: {
+               users: user.$id,
+               logo: fileId
+            }
          });
 
          if (error) {
@@ -76,6 +80,7 @@ const SettingsLogoForm = ({ recordExists, user, logo }) => {
          <div>
             <h1 className='font-semibold'>Yrityksen logo</h1>
             <p className='text-zinc-600 leading-tight'>Lataa oma yrityksesi logo.</p>
+            <p className='text-zinc-600 leading-tight'>Tuettu tiedostomuoto: <span className='font-semibold text-black'>.svg</span></p>
             <div className='mt-4'>
                <Button className="mr-2 mt-auto" onClick={() => fileInputRef.current?.click()}>
                   <label
@@ -108,8 +113,12 @@ const SettingsLogoForm = ({ recordExists, user, logo }) => {
                setSelectedFile(null);
             }} size={18} className="absolute -top-2 -right-2 cursor-pointer" />}
             {selectedFile?.preview && <img src={selectedFile.preview} alt="company_logo1" />}
-   
-            {selectedFile === null && user.clientData?.logo && <img src={storage.getFilePreview("logos", user.clientData.logo)} alt="company_logo" />}
+            {/* {selectedFile === null && user.clientData?.logo && <SvgImage fileUrl={storage.getFilePreview("logos", user.clientData.logo)} />} */}
+            {selectedFile === null && user.clientData?.logo &&
+               <SVGComponent
+                  url={storage.getFileView("logos", user.clientData.logo)}
+               />
+            }
          </div>
       </div>
    );

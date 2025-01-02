@@ -31,9 +31,11 @@ const SettingsDescriptionForm = ({ recordExists, user, fi_welcome_text, en_welco
 	const handleSave = async () => {
 		if (recordExists === false) {
 			const { error } = await createDocument("main_db", "client_data", {
-				users: user.$id,
-				fi_welcome_text: fiContent,
-				en_welcome_text: enContent
+				body: {
+					users: user.$id,
+					fi_welcome_text: fiContent,
+					en_welcome_text: enContent
+				}
 			})
 
 			if (error) {

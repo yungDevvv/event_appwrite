@@ -8,22 +8,23 @@ import { getLoggedInUser } from "@/lib/appwrite/server/appwrite";
 
 export default async function Page() {
    const user = await getLoggedInUser();
+   console.log(user)
    return (
       <div>
          <section className="mb-6 mt-2">
             <SettingsLogoForm
                user={user}
-               recordExists={user.hasOwnProperty("clientData")}
-               logo={user.hasOwnProperty("clientData") && user.clientData?.logo ? user.clientData.logo : null}
+               recordExists={user.clientData}
+               logo={user.clientData && user.clientData?.logo ? user.clientData.logo : null}
             />
          </section>
          <hr></hr>
          <section className="my-6">
             <SettingsDescriptionForm
                user={user}
-               recordExists={user.hasOwnProperty("clientData")}
-               fi_welcome_text={user.hasOwnProperty("clientData") && user.clientData?.fi_welcome_text ? user.clientData.fi_welcome_text : null}
-            en_welcome_text={user.hasOwnProperty("clientData") && user.clientData?.en_welcome_text ? user.clientData.en_welcome_text : null}
+               recordExists={user.clientData}
+               fi_welcome_text={user.clientData && user.clientData?.fi_welcome_text ? user.clientData.fi_welcome_text : null}
+               en_welcome_text={user.clientData && user.clientData?.en_welcome_text ? user.clientData.en_welcome_text : null}
             />
          </section>
          <hr></hr>

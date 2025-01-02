@@ -23,6 +23,7 @@ import { useEventContext } from "@/context/EventContext";
 import { ArrowLeftFromLine, Calendar, FileText, Info, MapPin, Smile } from 'lucide-react';
 import { storage } from "@/lib/appwrite/client/appwrite";
 import { signOut } from "@/lib/appwrite/server/appwrite";
+import SVGComponent from "@/components/svg-image";
 
 export default function Page({ params }) {
    const [infoModalOpen, setInfoModalOpen] = useState(false)
@@ -64,11 +65,16 @@ export default function Page({ params }) {
 
                <div className='relative z-10 px-4 text-center'>
                   {eventData.users.clientData && eventData.users.clientData?.logo && (
-                     <img
-                        src={storage.getFileView("logos", eventData.users.clientData.logo)}
-                        className='w-24 mx-auto mb-4 drop-shadow-2xl'
-                        alt="Logo"
+
+                     <SVGComponent
+                        url={storage.getFileView("logos", eventData.users.clientData?.logo)}
+                        className='w-[230px] mx-auto mb-4 drop-shadow-2xl'
                      />
+                     // <img
+                     //    src={storage.getFileView("logos", eventData.users.clientData.logo)}
+                     //    className='w-24 mx-auto mb-4 drop-shadow-2xl'
+                     //    alt="Logo"
+                     // />
                   )}
                   <h1 className='font-bold text-3xl mb-2 drop-shadow-lg'>{t("v1")}</h1>
                   <p className='text-xl text-[#FF8F00] font-medium'>{eventData.event_name}</p>
@@ -146,7 +152,7 @@ export default function Page({ params }) {
                               <Link
                                  target="_blank"
                                  rel="noopener noreferrer"
-                                 className='text-white hover:text-[#FF8F00] transition-colors underline underline-offset-4' 
+                                 className='text-white hover:text-[#FF8F00] transition-colors underline underline-offset-4'
                                  href={storage.getFileView("instructions_files", eventData?.instructions_file)}
                               >
                                  {t("v9")}

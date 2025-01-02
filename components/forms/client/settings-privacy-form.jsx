@@ -75,17 +75,19 @@ const SettingsPrivacyForm = ({ recordExists, user, privacy }) => {
       if (rawSelectedFile) {
          fileId = await createFile("privacy_statement", rawSelectedFile);
       }
-      
+
 
       if (recordExists === false) { // no record in db
 
          const { error } = await createDocument("main_db", "client_data", {
-            users: user.$id,
-            privacy: JSON.stringify({
-               active_privacy: selectedOption,
-               pdf_privacy: fileId,
-               link_privacy: inputValue
-            })
+            body: {
+               users: user.$id,
+               privacy: JSON.stringify({
+                  active_privacy: selectedOption,
+                  pdf_privacy: fileId,
+                  link_privacy: inputValue
+               })
+            }
          });
 
          if (error) {
@@ -161,12 +163,14 @@ const SettingsPrivacyForm = ({ recordExists, user, privacy }) => {
 
       if (recordExists === false) {
          const { error } = await createDocument("main_db", "client_data", {
-            users: user.$id,
-            privacy: JSON.stringify({
-               active_privacy: selectedOption,
-               link_privacy: inputValue,
-               pdf_privacy: privacy?.pdf_privacy ? privacy?.pdf_privacy : ''
-            })
+            body: {
+               users: user.$id,
+               privacy: JSON.stringify({
+                  active_privacy: selectedOption,
+                  link_privacy: inputValue,
+                  pdf_privacy: privacy?.pdf_privacy ? privacy?.pdf_privacy : ''
+               })
+            }
          });
 
          if (error) {
@@ -278,7 +282,7 @@ const SettingsPrivacyForm = ({ recordExists, user, privacy }) => {
                            </div>
 
                         )}
-                        
+
                         {privacy !== null && !pdfUrl && privacy?.pdf_privacy && (
                            <Button variant="link" type="button" asChild>
                               <Link className='flex items-center !p-0 !h-7' target="_blank" rel="noopener noreferrer" href={storage.getFileView("privacy_statement", privacy.pdf_privacy)}><Eye className="mr-1 w-5 h-5" /> Näytä tietosuojaseloste</Link>
