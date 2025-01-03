@@ -14,11 +14,15 @@ export default async function Page({ params }) {
    let user = null;
    try {
       user = await getLoggedInUser();
-      if (user && user?.role === "member") {
-         return redirect("/event/" + user.active_event);
-      }
    } catch (error) {
+      console.log('Error getting logged in user:', error);
+      return null;
    }
+
+   if (user && user?.role === "member") {
+      return redirect("/event/" + user.active_event);
+   }
+
 
    const { eventId } = await params;
 

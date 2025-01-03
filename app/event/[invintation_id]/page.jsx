@@ -33,9 +33,7 @@ export default function Page({ params }) {
 
    const { userData, eventData } = useEventContext();
 
-   const [eventClientData, setEventClientData] = useState(null);
    const router = useRouter();
-   const origin = useOrigin();
 
    return (
       <div className='text-white min-h-screen bg-[#050505]'>
