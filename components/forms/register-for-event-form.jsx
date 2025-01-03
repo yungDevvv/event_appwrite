@@ -15,7 +15,7 @@ import { Separator } from "@/components/ui/separator";
 
 import { Fragment, useState } from "react";
 
-import { signInWithEmail } from "@/lib/appwrite/server/appwrite";
+import { getDocument, listDocuments, signInWithEmail } from "@/lib/appwrite/server/appwrite";
 import { storage } from "@/lib/appwrite/client/appwrite";
 import SVGComponent from "../svg-image";
 
@@ -70,9 +70,21 @@ export default function RegisterForEventForm({ logo, title, invintation_id }) {
       setMessage("");
       setErrorMessage("");
 
-      setMessage("Kirjautumislinkki lähetettiin sähköpostiisi. Kyseessä on kertakäyttöinen linkki, joka toimii vain kirjautumista varten.");
+      const userExists = await listDocuments("main_db", "users", [{ type: "equal", name: "email", value: formData.email }, { type: "limit", value: 1 }])
+
+      if (userExists.total === 0) {
+         setMessage("Ole hyvä ja rekiströidy ensin!");
+         setActiveRegisterForm(true);
+         return;
+      }
+
+
 
       const { error, data } = await signInWithEmail(formData.email, { register: false, invintation_id: invintation_id });
+
+      if (data) {
+         setMessage("Kirjautumislinkki lähetettiin sähköpostiisi. Kyseessä on kertakäyttöinen linkki, joka toimii vain kirjautumista varten.");
+      }
 
       // if (error) {
       //    setErrorMessage(error.message);
