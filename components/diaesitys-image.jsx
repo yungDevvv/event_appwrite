@@ -6,34 +6,34 @@ import { useEffect, useState } from "react";
 const DiaImage = ({ post, selectedPosts, handleCheckboxChange }) => {
    const [fileType, setFileType] = useState(null)
 
-   const getMimeTypeFromUrl = async (url) => {
-      try {
-         const response = await fetch(url, { method: 'HEAD' });
-         const contentType = response.headers.get('Content-Type');
+   useEffect(() => {
+      const getMimeTypeFromUrl = async (bucked_id, image_url) => {
+         try {
+            const image = await storage.getFile(bucked_id, image_url);
+            const type = image.mimeType.split("/")[0];
 
-         if (contentType.includes('image')) {
-            setFileType('image');
-         } else if (contentType.includes('video')) {
-            setFileType('video');
-         } else {
+            if (type === 'image') {
+               setFileType('image');
+            } else if (type === 'video') {
+               setFileType('video');
+            } else {
+               setFileType('unknown');
+            }
+         } catch (error) {
+            console.log('Error fetching the URL:', error);
             setFileType('unknown');
          }
-      } catch (error) {
-         console.log('Error fetching the URL:', error);
-         setFileType('unknown');
-      }
-   };
+      };
 
-   useEffect(() => {
-      getMimeTypeFromUrl(storage.getFileView("event_images", post.image_url))
-   }, [post.image_url])
+      getMimeTypeFromUrl("event_images", post.image_url);
+   }, [post]);
 
    return (
       <div key={post.$id} className="relative overflow-hidden rounded-lg shadow-md h-[350px]">
          <div
             className={`w-full h-full ${selectedPosts[post.$id] ? "bg-black opacity-90 blur-sm" : ""}`}
-         > 
-            {fileType === "image" && <img src={storage.getFileView("event_images", post.image_url)} alt="Post image" className="w-full h-full object-cover" />}
+         >
+            {fileType === "image" && <img src={storage.getFilePreview("event_images", post.image_url)} alt="Post image" className="w-full h-full object-cover" />}
             {fileType === "video" && <video autoPlay muted loop controls className="rounded-xl w-full h-full object-contain" src={storage.getFileView("event_images", post.image_url)} />}
          </div>
          <input
@@ -45,7 +45,7 @@ const DiaImage = ({ post, selectedPosts, handleCheckboxChange }) => {
          {selectedPosts[post.$id] && (
             <div className="absolute inset-0 flex items-center justify-center">
                <SquareX className="text-white w-24 h-24" />
-            </div> 
+            </div>
          )}
       </div>
    )

@@ -12,6 +12,7 @@ import useSWR from "swr";
 import { useEffect, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { storage } from "@/lib/appwrite/client/appwrite";
 
 
 
@@ -98,14 +99,14 @@ const ContentFetcher = ({ imageUrl }) => {
    const [fileType, setFileType] = useState('unknown');
 
    useEffect(() => {
-      const getMimeTypeFromUrl = async (url) => {
+      const getMimeTypeFromUrl = async (bucked_id, image_url) => {
          try {
-            const response = await fetch(url, { method: 'HEAD' });
-            const contentType = response.headers.get('Content-Type');
+            const image = await storage.getFile(bucked_id, image_url);
+            const type = image.mimeType.split("/")[0];
 
-            if (contentType.includes('image')) {
+            if (type === 'image') {
                setFileType('image');
-            } else if (contentType.includes('video')) {
+            } else if (type === 'video') {
                setFileType('video');
             } else {
                setFileType('unknown');
@@ -116,15 +117,39 @@ const ContentFetcher = ({ imageUrl }) => {
          }
       };
 
-      getMimeTypeFromUrl("https://supa.crossmedia.fi/storage/v1/object/public/" + imageUrl);
+      getMimeTypeFromUrl("event_images", imageUrl);
    }, [imageUrl]);
+
+   // useEffect(() => {
+   //    const getMimeTypeFromUrl = async (url) => {
+   //       try {
+   //          const response = await fetch(url, { method: 'HEAD' });
+   //          const contentType = response.headers.get('Content-Type');
+
+   //          if (contentType.includes('image')) {
+   //             setFileType('image');
+   //          } else if (contentType.includes('video')) {
+   //             setFileType('video');
+   //          } else {
+   //             setFileType('unknown');
+   //          }
+   //       } catch (error) {
+   //          console.log('Error fetching the URL:', error);
+   //          setFileType('unknown');
+   //       }
+   //    };
+
+   //    getMimeTypeFromUrl("https://supa.crossmedia.fi/storage/v1/object/public/" + imageUrl);
+   // }, [imageUrl]);
 
    return (
       <>
          {fileType === 'image' ? (
-            <img className="w-full h-full object-contain object-center" src={"https://supa.crossmedia.fi/storage/v1/object/public/" + imageUrl} />
+            // {fileType === "image" && <img src={storage.getFilePreview("event_images", post.image_url)} alt="Post image" className="w-full h-full object-cover" />}
+            // {fileType === "video" && <video autoPlay muted loop controls className="rounded-xl w-full h-full object-contain" src={storage.getFileView("event_images", post.image_url)} />}
+            <img className="w-full h-full object-contain object-center" src={storage.getFilePreview("event_images", imageUrl)} />
          ) : fileType === 'video' ? (
-            <video autoPlay muted loop className="w-full h-full object-contain object-center" src={"https://supa.crossmedia.fi/storage/v1/object/public/" + imageUrl} />
+            <video autoPlay muted loop className="w-full h-full object-contain object-center" src={storage.getFileView("event_images", imageUrl)} />
          ) : (
             <div>Loading content type...</div>
          )}

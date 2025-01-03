@@ -74,11 +74,12 @@ export default function Page() {
       if (event) {
          const canceledPosts = event.event_posts.reduce((acc, post) => {
             if (post.show_in_slider === false) {
-               acc[post.id] = true;
+               console.log(post, "post.show_in_slider === false")
+               acc[post.$id] = true;
             }
             return acc;
          }, {});
-
+   
          setSelectedPosts(canceledPosts)
       }
       mutate();
