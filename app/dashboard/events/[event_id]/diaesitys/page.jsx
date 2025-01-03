@@ -42,11 +42,11 @@ export default function Page() {
    };
 
    const handleSave = async () => {
-
+      console.log(selectedPosts)
       const updates = Object.entries(selectedPosts).map(async ([postId, show]) => {
 
          const { error } = await updateDocument("main_db", "event_posts", postId, {
-            show_in_slider: show
+            show_in_slider: !show
          })
 
          if (error) {
@@ -72,14 +72,13 @@ export default function Page() {
 
    useEffect(() => {
       if (event) {
-         const canceledPosts = event.event_posts.reduce((acc, post) => {
+         const canceledPosts = event?.event_posts?.reduce((acc, post) => {
             if (post.show_in_slider === false) {
-               console.log(post, "post.show_in_slider === false")
                acc[post.$id] = true;
             }
             return acc;
          }, {});
-   
+         
          setSelectedPosts(canceledPosts)
       }
       mutate();
@@ -110,6 +109,7 @@ export default function Page() {
       }
 
    }, [])
+
    return (
       <div className="w-full h-full min-h-screen">
          <h1 className="font-semibold text-2xl">{event && event.event_name}</h1>
