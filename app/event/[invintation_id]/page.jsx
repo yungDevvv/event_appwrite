@@ -9,6 +9,18 @@ import {
    DialogTrigger,
 } from "@/components/ui/dialog"
 
+import {
+   AlertDialog,
+   AlertDialogAction,
+   AlertDialogCancel,
+   AlertDialogContent,
+   AlertDialogDescription,
+   AlertDialogFooter,
+   AlertDialogHeader,
+   AlertDialogTitle,
+   AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
 import '../../custom.css'
 import { useOrigin } from '@/hooks/use-origin';
 import { Button } from "@/components/ui/button";
@@ -26,7 +38,9 @@ import { signOut } from "@/lib/appwrite/server/appwrite";
 import SVGComponent from "@/components/svg-image";
 
 export default function Page({ params }) {
-   const [infoModalOpen, setInfoModalOpen] = useState(false)
+   const [infoModalOpen, setInfoModalOpen] = useState(false);
+   const [confirmLogoutModalOpen, setConfirmLogoutModalOpen] = useState(false);
+
    const { invintation_id } = useParams();
    const t = useTranslations();
    const locale = useLocale();
@@ -37,42 +51,44 @@ export default function Page({ params }) {
 
    return (
       <div className='text-white min-h-screen bg-[#050505]'>
-         <nav className="fixed bottom-0 left-0 right-0 bg-black backdrop-blur-lg z-10 py-5 px-4 border-t border-zinc-900">
-            <div className="flex justify-between items-center max-w-[900px] mx-auto">
-               {userData && userData.role === "client" && (
-                  <Button variant="icon" className="bg-[#FF8F00] hover:bg-[#FFA726] transition-all" asChild>
-                     <Link href="/dashboard/events">
-                        <ArrowLeftFromLine className="w-5 h-5" />
-                     </Link>
-                  </Button>
-               )}
-               <LanguageSwitcher />
-               <Button variant="icon" className="bg-[#FF8F00] hover:bg-[#FFA726] transition-all" onClick={() => setInfoModalOpen(true)}>
-                  <Info className='w-5 h-5' />
-               </Button>
-            </div>
-         </nav>
-         <div className="pb-20">
-            <div className="relative h-[30vh] flex items-center justify-center" >
+         <div className="pb-20 max-sm:pb-12">
+            <div className="relative min-h-[320px] h-[30vh] flex items-center justify-center" >
                <img
                   src="https://crossmedia.fi/holvi/poistielta/img/banner-monkija.jpg"
                   alt="Monkija Banner"
                   className="absolute inset-0 w-full h-full object-cover"
                />
                <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-black/80 to-black/30" />
-
+               {userData && userData.role === "client" && (
+                  <Button variant="icon" className="bg-[#FF8F00] hover:bg-[#FFA726] transition-all absolute top-3 left-3 z-50" asChild>
+                     <Link href="/dashboard/events">
+                        <ArrowLeftFromLine className="w-5 h-5 mr-2" />
+                        Takaisin hallintapaneeliin
+                     </Link>
+                  </Button>
+               )}
+               {/* Navigation Secondery */}
+               <nav className="absolute top-3 right-3 z-50 flex flex-col gap-3">
+                  <Button
+                     className="text-sm flex-1 bg-[#FF8F00] hover:bg-[#FFA726] transition-all shadow-lg shadow-orange-900/20"
+                     onClick={() => {
+                        // router.push(`/logout`)
+                        setConfirmLogoutModalOpen(true)
+                     }}
+                  >
+                     <ArrowLeftFromLine className="w-5 h-5" />
+                  </Button>
+                  <Button variant="icon" className="bg-[#FF8F00] hover:bg-[#FFA726] transition-all flex-1" onClick={() => setInfoModalOpen(true)}>
+                     <Info className='w-5 h-5' />
+                  </Button>
+                  <LanguageSwitcher className="flex-1" />
+               </nav>
                <div className='relative z-10 px-4 text-center'>
                   {eventData.users.clientData && eventData.users.clientData?.logo && (
-
                      <SVGComponent
                         url={storage.getFileView("logos", eventData.users.clientData?.logo)}
                         className='w-[230px] mx-auto mb-4 drop-shadow-2xl'
                      />
-                     // <img
-                     //    src={storage.getFileView("logos", eventData.users.clientData.logo)}
-                     //    className='w-24 mx-auto mb-4 drop-shadow-2xl'
-                     //    alt="Logo"
-                     // />
                   )}
                   <h1 className='font-bold text-3xl mb-2 drop-shadow-lg'>{t("v1")}</h1>
                   <p className='text-xl text-[#FF8F00] font-medium'>{eventData.event_name}</p>
@@ -81,16 +97,16 @@ export default function Page({ params }) {
 
             <div className="px-4 py-8 bg-black/10 backdrop-blur-sm">
                <div className="max-w-[900px] mx-auto grid gap-8">
-
-                  <div className="grid grid-cols-1 gap-4">
-                     <Button className="py-6 bg-[#FF8F00] hover:bg-[#FFA726] transition-all shadow-lg shadow-orange-900/20">
+                  {/* Navigation */}
+                  <div className="flex gap-4 max-sm:flex-col">
+                     <Button className="w-full py-6 bg-[#FF8F00] hover:bg-[#FFA726] transition-all shadow-lg shadow-orange-900/20">
                         <Link href={`/event/${invintation_id}/feed`} className='text-base font-medium'>
                            {t("v2")}
                         </Link>
                      </Button>
 
                      {eventData.users.clientData && eventData.users.clientData?.google_link && (
-                        <Button className="py-6 bg-[#FF8F00] hover:bg-[#FFA726] transition-all shadow-lg shadow-orange-900/20">
+                        <Button className="w-full py-6 bg-[#FF8F00] hover:bg-[#FFA726] transition-all shadow-lg shadow-orange-900/20">
                            <a
                               target="_blank"
                               rel="noopener noreferrer"
@@ -101,17 +117,7 @@ export default function Page({ params }) {
                            </a>
                         </Button>
                      )}
-
-                     <Button
-                        className="text-base py-6 bg-[#FF8F00] hover:bg-[#FFA726] transition-all shadow-lg shadow-orange-900/20"
-                        onClick={() => {
-                           router.push(`/logout`)
-                        }}
-                     >
-                        {t("v4")}
-                     </Button>
                   </div>
-
 
                   <div className="prose prose-invert max-w-none">
                      {eventData.users?.clientData && (
@@ -168,8 +174,7 @@ export default function Page({ params }) {
                         )}
                      </div>
                   </div>
-
-                  <div className="space-y-8">
+                  <div className="bg-[#0a0a0a] rounded-xl p-6 space-y-6 border border-zinc-900">
                      <div className="prose prose-invert max-w-none">
                         {eventData && (
                            locale === "fi" ? (
@@ -179,21 +184,33 @@ export default function Page({ params }) {
                            )
                         )}
                      </div>
-
-                     <div className="prose prose-invert max-w-none">
-                        {eventData.users?.clientData && (
-                           locale === "fi" ? (
-                              <div dangerouslySetInnerHTML={{ __html: eventData.users?.clientData.fi_sub_description }} />
-                           ) : (
-                              <div dangerouslySetInnerHTML={{ __html: eventData.users?.clientData.en_sub_description }} />
-                           )
-                        )}
-                     </div>
+                  </div>
+                  <div className="prose prose-invert max-w-none">
+                     {eventData.users?.clientData && (
+                        locale === "fi" ? (
+                           <div dangerouslySetInnerHTML={{ __html: eventData.users?.clientData.fi_sub_description }} />
+                        ) : (
+                           <div dangerouslySetInnerHTML={{ __html: eventData.users?.clientData.en_sub_description }} />
+                        )
+                     )}
                   </div>
                </div>
             </div>
          </div>
+         <AlertDialog open={confirmLogoutModalOpen} onOpenChange={setConfirmLogoutModalOpen}>
+            <AlertDialogContent className="max-w-sm">
+               <AlertDialogHeader>
+                  <AlertDialogTitle>Olet kirjautumassa ulos</AlertDialogTitle>
+                  <AlertDialogDescription>
 
+                  </AlertDialogDescription>
+               </AlertDialogHeader>
+               <AlertDialogFooter>
+                  <AlertDialogCancel>{t("r7")}</AlertDialogCancel>
+                  <AlertDialogAction className="bg-[#FF8F00] hover:bg-[#FFA726]" onClick={() => router.push(`/logout`)}>{t("v4")}</AlertDialogAction>
+               </AlertDialogFooter>
+            </AlertDialogContent>
+         </AlertDialog>
          <Dialog onOpenChange={setInfoModalOpen} open={infoModalOpen}>
             <div className="rounded-md overflow-hidden">
                <DialogContent className="max-h-[90vh] overflow-y-auto">
