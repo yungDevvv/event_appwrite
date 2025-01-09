@@ -22,19 +22,18 @@ import {
 } from "@/components/ui/alert-dialog"
 
 import '../../custom.css'
-import { useOrigin } from '@/hooks/use-origin';
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { format } from 'date-fns';
 import { useTranslations } from 'next-intl';
 import LanguageSwitcher from '@/components/language-switcher';
 import { useLocale } from "next-intl";
 import { useEventContext } from "@/context/EventContext";
-import { ArrowLeftFromLine, Calendar, FileText, Info, MapPin, Smile } from 'lucide-react';
+import { ArrowLeftFromLine, Calendar, FileText, Info, MapPin, Smile, LogOut } from 'lucide-react';
 import { storage } from "@/lib/appwrite/client/appwrite";
-import { signOut } from "@/lib/appwrite/server/appwrite";
+
 import SVGComponent from "@/components/svg-image";
 
 export default function Page({ params }) {
@@ -50,7 +49,7 @@ export default function Page({ params }) {
    const router = useRouter();
 
    return (
-      <div className='text-white min-h-screen bg-[#050505]'>
+      <div className='text-white min-h-screen'>
          <div className="pb-20 max-sm:pb-12">
             <div className="relative min-h-[320px] h-[30vh] flex items-center justify-center" >
                <img
@@ -59,25 +58,26 @@ export default function Page({ params }) {
                   className="absolute inset-0 w-full h-full object-cover"
                />
                <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-black/80 to-black/30" />
-               {userData && userData.role === "client" && (
-                  <Button variant="icon" className="bg-[#FF8F00] hover:bg-[#FFA726] transition-all absolute top-3 left-3 z-50" asChild>
-                     <Link href="/dashboard/events">
-                        <ArrowLeftFromLine className="w-5 h-5 mr-2" />
-                        Takaisin hallintapaneeliin
-                     </Link>
-                  </Button>
-               )}
+
                {/* Navigation Secondery */}
                <nav className="absolute top-3 right-3 z-50 flex flex-col gap-3">
-                  <Button
-                     className="text-sm flex-1 bg-[#FF8F00] hover:bg-[#FFA726] transition-all shadow-lg shadow-orange-900/20"
-                     onClick={() => {
-                        // router.push(`/logout`)
-                        setConfirmLogoutModalOpen(true)
-                     }}
-                  >
-                     <ArrowLeftFromLine className="w-5 h-5" />
-                  </Button>
+                  {userData?.role === "client" ? (
+                     <Button variant="icon" className="text-sm flex-1 bg-[#FF8F00] hover:bg-[#FFA726] transition-all shadow-lg shadow-orange-900/20" asChild>
+                        <Link href="/dashboard/events">
+                           <ArrowLeftFromLine className="w-5 h-5 mr-2" />
+                        </Link>
+                     </Button>
+                  ) : (
+                     <Button
+                        className="text-sm flex-1 bg-[#FF8F00] hover:bg-[#FFA726] transition-all shadow-lg shadow-orange-900/20"
+                        onClick={() => {
+                           // router.push(`/logout`)
+                           setConfirmLogoutModalOpen(true)
+                        }}
+                     >
+                        <LogOut className="w-5 h-5" />
+                     </Button>
+                  )}
                   <Button variant="icon" className="bg-[#FF8F00] hover:bg-[#FFA726] transition-all flex-1" onClick={() => setInfoModalOpen(true)}>
                      <Info className='w-5 h-5' />
                   </Button>
@@ -131,8 +131,8 @@ export default function Page({ params }) {
 
 
                   <div className="bg-[#0a0a0a] rounded-xl p-6 space-y-6 border border-zinc-900">
+                     <h3 className="text-lg font-medium">Paikka ja aika</h3>
                      <div className="grid gap-4">
-
                         <div className="flex items-center space-x-4">
                            <span className="text-lg"><Calendar className="text-[#FF8F00]" /></span>
                            {eventData?.event_time && (
