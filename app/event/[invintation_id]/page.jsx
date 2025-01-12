@@ -64,7 +64,7 @@ export default function Page({ params }) {
                   {userData?.role === "client" ? (
                      <Button variant="icon" className="text-sm flex-1 bg-[#FF8F00] hover:bg-[#FFA726] transition-all shadow-lg shadow-orange-900/20" asChild>
                         <Link href="/dashboard/events">
-                           <ArrowLeftFromLine className="w-5 h-5 mr-2" />
+                           <ArrowLeftFromLine className="w-5 h-5" />
                         </Link>
                      </Button>
                   ) : (

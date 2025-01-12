@@ -14,6 +14,7 @@ import { storage } from "@/lib/appwrite/client/appwrite"
 import SVGComponent from "../svg-image"
 
 export function MainSidebar({ user }) {
+  console.log(user)
   return (
     <Sidebar className="bg-accent/60 ">
       <SidebarHeader className="justify-center">

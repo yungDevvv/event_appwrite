@@ -15,9 +15,10 @@ import { Separator } from "@/components/ui/separator";
 
 import { Fragment, useState } from "react";
 
-import { getDocument, listDocuments, signInWithEmail } from "@/lib/appwrite/server/appwrite";
+import {  listDocuments, signInWithEmail } from "@/lib/appwrite/server/appwrite";
 import { storage } from "@/lib/appwrite/client/appwrite";
 import SVGComponent from "../svg-image";
+import { mauticEmailService } from "@/lib/mautic/mautic";
 
 export default function RegisterForEventForm({ logo, title, invintation_id }) {
 
@@ -31,38 +32,17 @@ export default function RegisterForEventForm({ logo, title, invintation_id }) {
       setMessage("");
       setErrorMessage("");
 
-      try {
-         const { error, data } = await signInWithEmail(formData.email, { register: true, first_name: formData.first_name, last_name: formData.last_name, invintation_id: invintation_id, email: formData.email });
+      const { error, data } = await signInWithEmail(formData.email, { register: true, first_name: formData.first_name, last_name: formData.last_name, invintation_id: invintation_id, email: formData.email });
 
-         setMessage("Kirjautumislinkki lähetettiin sähköpostiisi. Kyseessä on kertakäyttöinen linkki, joka toimii vain kirjautumista varten.");
+      setMessage("Kirjautumislinkki lähetettiin sähköpostiisi. Kyseessä on kertakäyttöinen linkki, joka toimii vain kirjautumista varten.");
 
-      } catch (error) {
-         console.log('Error sing up:', error.message);
+      if (error) {
+         console.log(error);
+         setErrorMessage(error?.message);
+         return;
       }
-      // if (error && error.code === "user_already_exists") {
-      //    setActiveRegisterForm(false);
-      //    setMessage("Huomasimme, että sinulla on jo käyttäjätili järjestelmässämme. Kirjaudu sisään käyttäen olemassa olevaa tiliäsi, niin voimme lisätä sinut tapahtuman osallistujaksi.");
-      //    console.log('Error sing up:', error.message);
-      //    return;
-      // }
-
-      // if (error && error.code !== "user_already_exists") {
-      //    setErrorMessage(error.message);
-      //    console.log('Error sing up:', error.message);
-      //    return;
-      // }
-
-      // if (data && data.user) {
-      //    const { error } = await supabase.from("users").update({ active_event: invintation_id }).eq("id", data.user.id);
-
-      //    if (error) {
-      //       console.log('Error update user info:', error.message);
-      //       setErrorMessage(error.message);
-      //       return;
-      //    }
-
-      //    setMessage("Kutsulinkki lähetettiin sähköpostiisi, katso myös roskapostikansio.");
-      // }
+      
+      await mauticEmailService.handleUserAuthentication(formData.email, { name: `${formData.first_name} ${formData.last_name}` });
 
    }
 
@@ -83,55 +63,9 @@ export default function RegisterForEventForm({ logo, title, invintation_id }) {
       const { error, data } = await signInWithEmail(formData.email, { register: false, invintation_id: invintation_id });
 
       if (data) {
+
          setMessage("Kirjautumislinkki lähetettiin sähköpostiisi. Kyseessä on kertakäyttöinen linkki, joka toimii vain kirjautumista varten.");
       }
-
-      // if (error) {
-      //    setErrorMessage(error.message);
-      //    console.log('Error logging in:', error.message);
-      //    return;
-      // }
-
-      // if (!error && data) {
-      //    console.log("ACTIVE EVENT UPDATE DOCUMENT")
-
-      //    const { error: updateError } = await updateDocument("main_db", "users", data.userId, {
-      //       active_event: invintation_id
-      //    })
-
-      //    if (updateError) {
-      //       console.log('Error update user info:', updateError.message)
-      //       setErrorMessage(updateError.message);
-      //       return;
-      //    }
-
-      //    const { error: createError } = await createDocument("main_db", "event_member", {
-      //       body: {
-      //          events: invintation_id,
-      //          users: data.userId
-      //       }
-      //    })
-
-      //    if (createError) {
-      //       console.log('Error update user info:', updateError.message)
-      //       setErrorMessage(createError.message);
-      //       return;
-      //    }
-
-      //    router.push("/event/" + invintation_id);
-      // }
-      // if (error && error.message === "Invalid login credentials") {
-      //    setErrorMessage("Virheellinen käyttäjätunnus tai salasana");
-      //    console.log('Error logging in:', error.message);
-      //    return;
-      // }
-
-      // if (error && error.message !== "Invalid login credentials") {
-      //    setErrorMessage(error.message);
-      //    console.log('Error logging in:', error.message);
-      //    return;
-      // }
-
    };
 
 
