@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 import { useModal } from "@/hooks/use-modal"
 import { useOrigin } from "@/hooks/use-origin"
 import { mauticEmailService } from "@/lib/mautic/mautic"
+import { useToast } from "@/hooks/use-toast"
 
 export default function SendConfirmationModal() {
    const { data: { event, user }, isOpen, onClose, type } = useModal();
@@ -17,6 +18,8 @@ export default function SendConfirmationModal() {
    const [isSending, setIsSending] = useState(false);
 
    const origin = useOrigin();
+
+   const { toast } = useToast();
 
    const handleSend = async () => {
       try {
@@ -28,6 +31,13 @@ export default function SendConfirmationModal() {
             content: emailTemplate,
             team_name: "Pois Tieltä Oy"
          });
+
+         toast({
+            variant: "success",
+            title: "Tilausvahvistus",
+            description: "Tilausvahvistus on lähetetty sähköpostiin - " + event?.contact_email
+         });
+
          setIsSending(false);
          onClose();
       } catch (error) {
@@ -53,7 +63,7 @@ export default function SendConfirmationModal() {
       </div>
    `.trim().replace(/\s+/g, ' ');
 
-   
+
    return (
       <Dialog open={isModalOpen} onOpenChange={onClose}>
          <DialogContent className="max-w-[600px] w-full min-h-[400px] flex flex-col">
