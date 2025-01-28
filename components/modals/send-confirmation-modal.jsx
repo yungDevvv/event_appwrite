@@ -10,6 +10,8 @@ import { useModal } from "@/hooks/use-modal"
 import { useOrigin } from "@/hooks/use-origin"
 import { mauticEmailService } from "@/lib/mautic/mautic"
 import { useToast } from "@/hooks/use-toast"
+import { storage } from "@/lib/appwrite/client/appwrite"
+
 
 export default function SendConfirmationModal() {
    const { data: { event, user }, isOpen, onClose, type } = useModal();
@@ -55,10 +57,12 @@ export default function SendConfirmationModal() {
          <div style="font-size: 16px; margin-top: 10px; border-top: 1px solid #ccc; padding-top: 10px;"> <div>${event?.fi_event_description}</div></div>
       </div>
    `
-
+   const logo = <img src="/poistielta" />
+   console.log(storage.getFileView("logos", user?.clientData?.logo))
    const emailTemplate = `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
          ${user?.clientData?.order_confirmation || ''}
+         <img width='150' src="${storage.getFilePreview('logos', '6798cbd500354cd0b4d2')}" />
          ${adHTML}
       </div>
    `.trim().replace(/\s+/g, ' ');
@@ -83,7 +87,7 @@ export default function SendConfirmationModal() {
                <div className="flex-1 overflow-auto">
                   <TabsContent value="preview" className="mt-4 h-full">
                      <div className="bg-muted p-4 rounded-lg h-full">
-                        <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: user?.clientData?.order_confirmation }} />
+                        <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: `${user?.clientData?.order_confirmation} <div><img width='150' src=${storage.getFilePreview('logos', '6798cbd500354cd0b4d2')} /></div>` }} />
                         <div dangerouslySetInnerHTML={{ __html: adHTML }} />
                      </div>
                   </TabsContent>

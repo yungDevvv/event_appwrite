@@ -43,7 +43,7 @@ import Link from "next/link";
 import { useModal } from "@/hooks/use-modal";
 import { Button } from "../ui/button";
 import { getDocument, deleteDocument, updateDocument } from "@/lib/appwrite/server/appwrite";
-import SendConfirmationModal from "../modals/send-confirmation-modal";
+
 
 const EventsTable = ({ user }) => {
    const [copied, setCopied] = useState(false);
@@ -148,7 +148,7 @@ const EventsTable = ({ user }) => {
                            <TableCell className="font-medium whitespace-nowrap">{event.event_name}</TableCell>
                            <TableCell className="capitalize whitespace-nowrap">{event.event_type}</TableCell>
                            <TableCell className="whitespace-nowrap">{format(new Date(event.event_date), 'dd.MM.yyyy')} {event.event_time.slice(0, 5)}</TableCell>
-                           <TableCell className="whitespace-nowrap">{event.memberCount}</TableCell>
+                           <TableCell className="whitespace-nowrap">{event.event_member.length}</TableCell>
                            <TableCell className="max-w-[100px] truncate whitespace-nowrap">
                               {
                                  event.additional_services?.length

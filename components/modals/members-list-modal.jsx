@@ -29,7 +29,7 @@ const MembersListModal = () => {
    const router = useRouter();
    const { toast } = useToast();
 
-   const eventMembers = data.event.data.event_member;
+   let eventMembers = data.event.data.event_member;
 
    const isModalOpen = isOpen && type === "event-members-list";
 
@@ -47,7 +47,7 @@ const MembersListModal = () => {
          });
          return;
       }
-      eventMembers = eventMembers.filter((member) => member.$id !== member_id);
+      eventMembers = eventMembers?.filter((member) => member.$id !== member_id);
       router.refresh();
       toast({
          variant: "success",

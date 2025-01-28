@@ -34,14 +34,13 @@ const CKeditor = dynamic(() => import('@/components/ck-editor'), {
    loading: () => <div className='w-full min-h-[190px] flex justify-center items-center py-10'><Loader2 className='animate-spin text-clientprimary' /></div>
 });
 
-
 const eventTypes = [
-   { value: 'rallicross', label: 'Rallicross', image: '/images/rallicross.jpg' },
-   { value: 'offroad', label: 'Offroad', image: '/images/offroad.jpg' },
-   { value: 'motocross', label: 'Motocross', image: '/images/motocross.jpg' },
-   { value: 'monkijasafari', label: 'Mönkijäsafari', image: '/images/monkijasafari.jpg' },
-   { value: 'sahkopyoraily', label: 'Sähköpyöräily', image: '/images/sahkopyoraily.jpg' },
-   { value: 'muu', label: 'Muu', image: '/images/default.jpg' }
+   { value: 'Maastoautot', label: 'Maastoautot', image: '/images/rallicross.jpg' },
+   { value: 'Mönkijät', label: 'Mönkijät', image: '/images/offroad.jpg' },
+   { value: 'Ralli', label: 'Ralli', image: '/images/motocross.jpg' },
+   { value: 'Enduro', label: 'Enduro', image: '/images/monkijasafari.jpg' },
+   { value: 'Sähköpyörät', label: 'Sähköpyörät', image: '/images/sahkopyoraily.jpg' },
+   { value: 'muu', label: 'Muu, mikä?', image: '/images/default.jpg' }
 ];
 
 const minutes = ["00", "15", "30", "45"];
